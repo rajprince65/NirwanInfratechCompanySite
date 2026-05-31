@@ -1,0 +1,203 @@
+{% extends 'app1/admin/base.html' %}
+{% block title %}{% if action == 'Edit' %}Edit Vacancy{% else %}New Vacancy{% endif %}{% endblock %}
+{% block page_title %}{% if action == 'Edit' %}Edit Vacancy{% else %}Add New Vacancy{% endif %}{% endblock %}
+{% block breadcrumb %}
+  <a href="{% url 'admin_dashboard' %}">Home</a>
+  <i class="fas fa-chevron-right" style="font-size:0.6rem"></i>
+  <a href="{% url 'admin_vacancies' %}">Vacancies</a>
+  <i class="fas fa-chevron-right" style="font-size:0.6rem"></i>
+  <span>{% if action == 'Edit' %}Edit{% else %}New{% endif %}</span>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;gap:1.5rem;align-items:flex-start;flex-wrap:wrap">
+
+  <!-- ── Form card ─────────────────────────────── -->
+  <div style="flex:1;min-width:300px">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="title-icon" style="background:#ECFDF5;color:var(--green)">
+            <i class="fas fa-{% if action == 'Edit' %}pencil{% else %}plus{% endif %}"></i>
+          </span>
+          {% if action == 'Edit' %}Edit Vacancy Details{% else %}Create New Vacancy{% endif %}
+        </div>
+      </div>
+      <div class="card-body" style="padding:1.75rem">
+        <form method="POST">
+          {% csrf_token %}
+
+          <!-- Basic info -->
+          <div class="form-section">
+            <div class="form-section-title"><i class="fas fa-info-circle"></i> Basic Information</div>
+
+            <div class="form-group">
+              <label>Job Title <span style="color:var(--red)">*</span></label>
+              <input type="text" name="title" placeholder="e.g. Web Development Intern"
+                     value="{% if vacancy %}{{ vacancy.title }}{% endif %}" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Department</label>
+                <input type="text" name="department" placeholder="e.g. Engineering"
+                       value="{% if vacancy %}{{ vacancy.department }}{% endif %}">
+              </div>
+              <div class="form-group">
+                <label>Location</label>
+                <input type="text" name="location" placeholder="e.g. Remote / Biratnagar"
+                       value="{% if vacancy %}{{ vacancy.location }}{% else %}Remote / Biratnagar{% endif %}">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Duration</label>
+                <input type="text" name="duration" placeholder="e.g. 3 months"
+                       value="{% if vacancy %}{{ vacancy.duration }}{% endif %}">
+              </div>
+              <div class="form-group">
+                <label>Stipend</label>
+                <input type="text" name="stipend" placeholder="e.g. Rs 5,000/month"
+                       value="{% if vacancy %}{{ vacancy.stipend }}{% endif %}">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Number of Openings</label>
+                <input type="number" name="openings" min="1" placeholder="e.g. 2"
+                       value="{% if vacancy %}{{ vacancy.openings }}{% else %}1{% endif %}">
+              </div>
+              <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:0.25rem">
+                <label class="toggle-label">
+                  <input type="checkbox" name="is_active"
+                    {% if not vacancy or vacancy.is_active %}checked{% endif %}>
+                  Mark as Active (visible on careers page)
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card appearance (careers page) -->
+          <div class="form-section">
+            <div class="form-section-title"><i class="fas fa-paint-brush"></i> Careers Page Card</div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Category <span style="color:var(--red)">*</span>
+                  <span style="font-weight:400;color:var(--text-light);font-size:0.73rem">(filter tab)</span>
+                </label>
+                <select name="category">
+                  <option value="dev"       {% if vacancy and vacancy.category == 'dev' %}selected{% endif %}>Development</option>
+                  <option value="design"    {% if vacancy and vacancy.category == 'design' %}selected{% endif %}>Design</option>
+                  <option value="marketing" {% if vacancy and vacancy.category == 'marketing' %}selected{% endif %}>Marketing</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Icon / Colour
+                  <span style="font-weight:400;color:var(--text-light);font-size:0.73rem">(card icon style)</span>
+                </label>
+                <select name="icon_type">
+                  <option value="web"       {% if vacancy and vacancy.icon_type == 'web' %}selected{% endif %}>🔵 Web (blue)</option>
+                  <option value="mobile"    {% if vacancy and vacancy.icon_type == 'mobile' %}selected{% endif %}>🟢 Mobile (green)</option>
+                  <option value="marketing" {% if vacancy and vacancy.icon_type == 'marketing' %}selected{% endif %}>🟡 Marketing (amber)</option>
+                  <option value="design"    {% if vacancy and vacancy.icon_type == 'design' %}selected{% endif %}>🩷 Design (pink)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Skills / Tech Tags</label>
+              <input type="text" name="skills_tags"
+                     placeholder="Comma-separated, e.g. HTML/CSS, React, Django, Git"
+                     value="{% if vacancy %}{{ vacancy.skills_tags }}{% endif %}">
+              <small style="color:var(--text-light);font-size:0.73rem;margin-top:3px;display:block">
+                These appear as tag pills on the job card. Keep to 5–6 tags.
+              </small>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="form-section">
+            <div class="form-section-title"><i class="fas fa-align-left"></i> Description & Requirements</div>
+            <div class="form-group">
+              <label>Job Description <span style="color:var(--red)">*</span></label>
+              <textarea name="description" placeholder="Describe the role, responsibilities, and what the intern will learn…" rows="6" required>{% if vacancy %}{{ vacancy.description }}{% endif %}</textarea>
+            </div>
+            <div class="form-group">
+              <label>Requirements</label>
+              <textarea name="requirements" placeholder="Skills, qualifications, or experience required…" rows="4">{% if vacancy %}{{ vacancy.requirements }}{% endif %}</textarea>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div style="display:flex;gap:0.75rem;align-items:center;padding-top:0.5rem;border-top:1px solid var(--border)">
+            <button type="submit" class="btn btn-primary btn-lg">
+              <i class="fas fa-{% if action == 'Edit' %}check{% else %}plus{% endif %}"></i>
+              {% if action == 'Edit' %}Save Changes{% else %}Create Vacancy{% endif %}
+            </button>
+            <a href="{% url 'admin_vacancies' %}" class="btn btn-ghost btn-lg">Cancel</a>
+            {% if action == 'Edit' %}
+            <a href="{% url 'admin_vacancy_delete' vacancy.pk %}"
+               class="btn btn-danger btn-lg"
+               style="margin-left:auto"
+               onclick="return confirm('Delete this vacancy? This cannot be undone.')">
+              <i class="fas fa-trash"></i> Delete
+            </a>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tips sidebar -->
+  <div style="width:240px;flex-shrink:0">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title" style="font-size:0.82rem"><i class="fas fa-lightbulb" style="color:var(--orange)"></i> Tips</div>
+      </div>
+      <div class="card-body" style="padding:1.25rem;font-size:0.82rem;color:var(--text-mid);line-height:1.7;display:flex;flex-direction:column;gap:0.875rem">
+        <div>
+          <strong style="color:var(--text);display:block;margin-bottom:2px">Title</strong>
+          Be specific — e.g. "Web Development Intern (React)" attracts better candidates.
+        </div>
+        <div>
+          <strong style="color:var(--text);display:block;margin-bottom:2px">Category</strong>
+          Controls which filter tab shows this card on the Careers page.
+        </div>
+        <div>
+          <strong style="color:var(--text);display:block;margin-bottom:2px">Icon / Colour</strong>
+          Matches the coloured icon on the card (blue=Web, green=Mobile, amber=Marketing, pink=Design).
+        </div>
+        <div>
+          <strong style="color:var(--text);display:block;margin-bottom:2px">Skills Tags</strong>
+          Keep to 5–6 comma-separated tags. They appear as small pills on the card.
+        </div>
+        <div>
+          <strong style="color:var(--text);display:block;margin-bottom:2px">Visibility</strong>
+          Only vacancies marked "Active" appear on the public careers page.
+        </div>
+        <div>
+          <strong style="color:var(--text);display:block;margin-bottom:2px">Stipend</strong>
+          Listing a stipend increases applications significantly.
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:1rem">
+      <a href="{% url 'admin_vacancies' %}" class="btn btn-ghost" style="width:100%;justify-content:center">
+        <i class="fas fa-arrow-left"></i> Back to Vacancies
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<style>
+@media(max-width:700px){
+  [style*="width:240px"]{width:100%!important}
+}
+</style>
+{% endblock %}

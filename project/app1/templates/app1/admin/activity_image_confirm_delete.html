@@ -1,0 +1,30 @@
+{% extends 'app1/admin/base.html' %}
+{% block title %}Delete Activity Image{% endblock %}
+
+{% block content %}
+<div style="max-width:480px;margin:0 auto;text-align:center;padding:2rem">
+  <p style="font-size:3rem;margin-bottom:1rem">🗑️</p>
+  <h1 style="font-size:1.4rem;font-weight:700;color:#0F172A;margin-bottom:0.5rem">Delete Activity Image?</h1>
+  <p style="color:#64748B;margin-bottom:0.5rem">
+    <strong>{{ img.title|default:"This image" }}</strong> will be permanently removed from the activity gallery.
+  </p>
+  {% if img.image %}
+  <img src="{{ img.image.url }}" alt="preview"
+       style="width:100%;max-height:180px;object-fit:cover;border-radius:0.75rem;margin:1rem 0;border:1px solid #E2E8F0">
+  {% endif %}
+  <form method="post" style="display:flex;gap:0.75rem;margin-top:1.5rem">
+    {% csrf_token %}
+    <button type="submit"
+            style="flex:1;padding:0.7rem;background:#dc2626;color:#fff;border:none;
+                   border-radius:0.55rem;font-weight:700;font-size:0.95rem;cursor:pointer">
+      Yes, Delete
+    </button>
+    <a href="{% url 'admin_activity_images' %}"
+       style="flex:1;text-align:center;padding:0.7rem;border:1px solid #E2E8F0;
+              border-radius:0.55rem;font-weight:600;font-size:0.95rem;
+              text-decoration:none;color:#475569;background:#F8FAFC">
+      Cancel
+    </a>
+  </form>
+</div>
+{% endblock %}

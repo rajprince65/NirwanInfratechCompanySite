@@ -1,0 +1,166 @@
+{% extends 'app1/admin/base.html' %}
+{% block title %}Application — {{ application.full_name }}{% endblock %}
+{% block page_title %}{{ application.full_name }}{% endblock %}
+{% block breadcrumb %}
+  <a href="{% url 'admin_dashboard' %}">Home</a>
+  <i class="fas fa-chevron-right" style="font-size:0.6rem"></i>
+  <a href="{% url 'admin_applications' %}">Applications</a>
+  <i class="fas fa-chevron-right" style="font-size:0.6rem"></i>
+  <span>{{ application.full_name }}</span>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;gap:1.5rem;align-items:flex-start;flex-wrap:wrap">
+
+  <!-- Main details -->
+  <div style="flex:1;min-width:300px;display:flex;flex-direction:column;gap:1.5rem">
+
+    <!-- Header card -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="title-icon" style="background:#FFFBEB;color:var(--orange)"><i class="fas fa-user-tie"></i></span>
+          Applicant Profile
+        </div>
+        <div class="action-group">
+          <a href="mailto:{{ application.email }}" class="btn btn-primary btn-sm">
+            <i class="fas fa-reply"></i> Email Applicant
+          </a>
+          <a href="{% url 'admin_application_delete' application.pk %}"
+             class="btn btn-danger btn-sm"
+             onclick="return confirm('Delete this application? This cannot be undone.')">
+            <i class="fas fa-trash"></i>
+          </a>
+        </div>
+      </div>
+      <div class="card-body" style="padding:1.75rem">
+        <!-- Avatar row -->
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.75rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)">
+          <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#F59E0B,#FBBF24);display:flex;align-items:center;justify-content:center;color:white;font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;flex-shrink:0">
+            {{ application.full_name|first|upper }}
+          </div>
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text)">{{ application.full_name }}</div>
+            <a href="mailto:{{ application.email }}" style="font-size:0.85rem;color:var(--blue);text-decoration:none">{{ application.email }}</a>
+            {% if application.phone %}
+            <div style="font-size:0.8rem;color:var(--text-light)"><i class="fas fa-phone" style="font-size:0.7rem"></i> {{ application.phone }}</div>
+            {% endif %}
+          </div>
+          <div style="margin-left:auto;text-align:right">
+            <span class="badge {{ application.status }}" style="font-size:0.75rem;padding:0.3rem 0.85rem">{{ application.get_status_display }}</span>
+            <div style="font-size:0.72rem;color:var(--text-light);margin-top:6px">Applied {{ application.submitted_at|date:"d M Y" }}</div>
+          </div>
+        </div>
+
+        <!-- Details grid -->
+        <div class="detail-grid" style="margin-bottom:1.5rem">
+          <div class="detail-field">
+            <div class="field-label">Position Applied</div>
+            <div class="field-value" style="color:var(--orange);font-weight:700">{{ application.position }}</div>
+          </div>
+          <div class="detail-field">
+            <div class="field-label">Institution</div>
+            <div class="field-value">{{ application.institution|default:"Not provided" }}</div>
+          </div>
+          <div class="detail-field">
+            <div class="field-label">Program / Course</div>
+            <div class="field-value">{{ application.program|default:"Not provided" }}</div>
+          </div>
+          <div class="detail-field">
+            <div class="field-label">Skills</div>
+            <div class="field-value">
+              {% if application.skills %}
+                {% for skill in application.skills.split %}
+                <span style="display:inline-block;background:var(--bg);border:1px solid var(--border);padding:2px 8px;border-radius:6px;font-size:0.72rem;font-weight:600;margin:2px 2px 2px 0;color:var(--text-mid)">{{ skill }}</span>
+                {% endfor %}
+              {% else %}
+                <span style="color:var(--text-light)">Not provided</span>
+              {% endif %}
+            </div>
+          </div>
+          {% if application.portfolio %}
+          <div class="detail-field" style="grid-column:1/-1">
+            <div class="field-label">Portfolio / GitHub</div>
+            <div class="field-value">
+              <a href="{{ application.portfolio }}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;display:flex;align-items:center;gap:6px">
+                <i class="fas fa-external-link-alt" style="font-size:0.75rem"></i>
+                {{ application.portfolio }}
+              </a>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        {% if application.motivation %}
+        <div class="detail-field">
+          <div class="field-label">Motivation / Cover Note</div>
+          <div class="field-value message-text">{{ application.motivation }}</div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Sidebar: status update -->
+  <div style="width:250px;flex-shrink:0;display:flex;flex-direction:column;gap:1rem">
+
+    <!-- Update status -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title" style="font-size:0.82rem">Update Status</div>
+      </div>
+      <div class="card-body" style="padding:1.25rem">
+        <form method="POST" action="{% url 'admin_application_detail' application.pk %}">
+          {% csrf_token %}
+          <div class="form-group" style="margin-bottom:1rem">
+            <label>Current Status</label>
+            <select name="status" class="filter-select" style="width:100%">
+              <option value="pending" {% if application.status == 'pending' %}selected{% endif %}>⏳ Pending</option>
+              <option value="reviewing" {% if application.status == 'reviewing' %}selected{% endif %}>🔍 Reviewing</option>
+              <option value="accepted" {% if application.status == 'accepted' %}selected{% endif %}>✅ Accepted</option>
+              <option value="rejected" {% if application.status == 'rejected' %}selected{% endif %}>❌ Rejected</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">
+            <i class="fas fa-check"></i> Update Status
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Submission info -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title" style="font-size:0.82rem">Submission Info</div>
+      </div>
+      <div class="card-body" style="padding:1.25rem;display:flex;flex-direction:column;gap:1rem">
+        <div class="detail-field">
+          <div class="field-label">Record ID</div>
+          <div class="field-value" style="font-family:'Syne',sans-serif">#{{ application.pk }}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">Submitted</div>
+          <div class="field-value" style="font-size:0.83rem">{{ application.submitted_at|date:"d M Y" }}</div>
+          <div style="font-size:0.74rem;color:var(--text-light)">{{ application.submitted_at|date:"H:i" }}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">Email</div>
+          <a href="mailto:{{ application.email }}" style="font-size:0.82rem;color:var(--blue);text-decoration:none;word-break:break-all">{{ application.email }}</a>
+        </div>
+      </div>
+    </div>
+
+    <a href="{% url 'admin_applications' %}" class="btn btn-ghost" style="width:100%;justify-content:center">
+      <i class="fas fa-arrow-left"></i> Back to Applications
+    </a>
+  </div>
+
+</div>
+
+<style>
+@media(max-width:700px){
+  [style*="width:250px"]{width:100%!important}
+}
+</style>
+{% endblock %}

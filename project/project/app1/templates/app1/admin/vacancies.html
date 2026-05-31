@@ -1,0 +1,86 @@
+{% extends 'app1/admin/base.html' %}
+{% block title %}Vacancies{% endblock %}
+{% block page_title %}Manage Vacancies{% endblock %}
+{% block breadcrumb %}<a href="{% url 'admin_dashboard' %}">Home</a> <i class="fas fa-chevron-right" style="font-size:0.6rem"></i> <span>Vacancies</span>{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <span class="title-icon" style="background:#ECFDF5;color:var(--green)"><i class="fas fa-briefcase"></i></span>
+      All Vacancies
+      <span style="background:var(--bg);border:1px solid var(--border);padding:2px 9px;border-radius:50px;font-size:0.68rem;color:var(--text-light);font-weight:600">
+        {{ vacancies|length }}
+      </span>
+    </div>
+    <a href="{% url 'admin_vacancy_create' %}" class="btn btn-primary">
+      <i class="fas fa-plus"></i> Add Vacancy
+    </a>
+  </div>
+
+  <div class="card-body">
+    {% if vacancies %}
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Title</th>
+          <th>Department</th>
+          <th>Duration</th>
+          <th>Stipend</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in vacancies %}
+        <tr>
+          <td style="color:var(--text-light);font-size:0.78rem;width:50px">{{ v.pk }}</td>
+          <td>
+            <div style="font-weight:600">{{ v.title }}</div>
+            <div style="font-size:0.73rem;color:var(--text-light);margin-top:2px">{{ v.description|truncatechars:50 }}</div>
+          </td>
+          <td style="font-size:0.82rem;color:var(--text-mid)">{{ v.department|default:"—" }}</td>
+          <td style="font-size:0.82rem;color:var(--text-mid)">{{ v.duration|default:"—" }}</td>
+          <td style="font-size:0.82rem;font-weight:600;color:var(--green)">{{ v.stipend|default:"—" }}</td>
+          <td>
+            {% if v.is_active %}
+              <span class="badge active"><i class="fas fa-circle" style="font-size:0.35rem"></i> Active</span>
+            {% else %}
+              <span class="badge inactive">Inactive</span>
+            {% endif %}
+          </td>
+          <td style="color:var(--text-light);font-size:0.78rem;white-space:nowrap">{{ v.created_at|date:"d M Y" }}</td>
+          <td>
+            <div class="action-group">
+              <a href="{% url 'admin_vacancy_edit' v.pk %}" class="btn btn-ghost btn-sm" title="Edit">
+                <i class="fas fa-pencil"></i>
+              </a>
+              <a href="{% url 'admin_vacancy_delete' v.pk %}"
+                 class="btn btn-danger btn-sm"
+                 title="Delete"
+                 onclick="return confirm('Delete vacancy \"{{ v.title }}\"? This cannot be undone.')">
+                <i class="fas fa-trash"></i>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon"><i class="fas fa-briefcase"></i></div>
+      <h3>No vacancies yet</h3>
+      <p>Add your first internship vacancy to display it on the careers page.</p>
+      <div style="margin-top:1.25rem">
+        <a href="{% url 'admin_vacancy_create' %}" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Create First Vacancy
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

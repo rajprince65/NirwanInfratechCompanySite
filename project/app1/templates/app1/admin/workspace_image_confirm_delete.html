@@ -1,0 +1,35 @@
+{% extends 'app1/admin/base.html' %}
+{% block title %}Delete Workspace Image{% endblock %}
+
+{% block content %}
+<div style="max-width:460px;margin:0 auto;text-align:center;padding:3rem 1rem">
+  <div style="font-size:3rem;margin-bottom:1rem">🗑️</div>
+  <h2 style="font-size:1.3rem;font-weight:700;color:#0F172A;margin-bottom:0.5rem">
+    Delete this image?
+  </h2>
+  {% if img.title %}
+  <p style="color:#475569;margin-bottom:1rem;font-size:0.9rem">"{{ img.title }}"</p>
+  {% endif %}
+  {% if img.image %}
+  <img src="{{ img.image.url }}" alt=""
+       style="width:100%;max-height:180px;object-fit:cover;border-radius:0.75rem;
+              margin-bottom:1.5rem;border:1px solid #E2E8F0">
+  {% endif %}
+  <p style="color:#94A3B8;font-size:0.88rem;margin-bottom:2rem">
+    This cannot be undone.
+  </p>
+  <form method="post" style="display:flex;gap:0.75rem;justify-content:center">
+    {% csrf_token %}
+    <button type="submit"
+            style="padding:0.65rem 1.5rem;background:#DC2626;color:#fff;
+                   border:none;border-radius:0.55rem;font-weight:700;cursor:pointer">
+      Yes, Delete
+    </button>
+    <a href="{% url 'admin_workspace_images' %}"
+       style="padding:0.65rem 1.5rem;border:1px solid #E2E8F0;border-radius:0.55rem;
+              text-decoration:none;color:#475569;font-weight:600;background:#F8FAFC">
+      Cancel
+    </a>
+  </form>
+</div>
+{% endblock %}

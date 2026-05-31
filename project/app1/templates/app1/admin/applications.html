@@ -1,0 +1,115 @@
+{% extends 'app1/admin/base.html' %}
+{% block title %}Internship Applications{% endblock %}
+{% block page_title %}Internship Applications{% endblock %}
+{% block breadcrumb %}<a href="{% url 'admin_dashboard' %}">Home</a> <i class="fas fa-chevron-right" style="font-size:0.6rem"></i> <span>Applications</span>{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <span class="title-icon" style="background:#FFFBEB;color:var(--orange)"><i class="fas fa-file-lines"></i></span>
+      All Applications
+      <span style="background:var(--bg);border:1px solid var(--border);padding:2px 9px;border-radius:50px;font-size:0.68rem;color:var(--text-light);font-weight:600">
+        {{ applications|length }}
+      </span>
+    </div>
+    <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+      <form method="GET" style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+        <div class="search-wrap">
+          <i class="fas fa-search"></i>
+          <input type="text" name="q" placeholder="Search name or email…" value="{{ q }}">
+        </div>
+        <select name="status" class="filter-select">
+          <option value="">All Statuses</option>
+          <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+          <option value="reviewing" {% if status_filter == 'reviewing' %}selected{% endif %}>Reviewing</option>
+          <option value="accepted" {% if status_filter == 'accepted' %}selected{% endif %}>Accepted</option>
+          <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Rejected</option>
+        </select>
+        <select name="position" class="filter-select">
+          <option value="">All Positions</option>
+          <option value="Web Development Intern" {% if position_filter == 'Web Development Intern' %}selected{% endif %}>Web Dev</option>
+          <option value="Mobile App Development Intern" {% if position_filter == 'Mobile App Development Intern' %}selected{% endif %}>Mobile Dev</option>
+          <option value="Digital Marketing Intern" {% if position_filter == 'Digital Marketing Intern' %}selected{% endif %}>Digital Marketing</option>
+        </select>
+        <button type="submit" class="btn btn-ghost btn-sm"><i class="fas fa-filter"></i></button>
+        {% if q or status_filter or position_filter %}
+        <a href="{% url 'admin_applications' %}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> Clear</a>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+
+  <div class="card-body">
+    {% if applications %}
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Applicant</th>
+          <th>Position</th>
+          <th>Institution</th>
+          <th>Applied</th>
+          <th>CV</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in applications %}
+        <tr>
+          <td style="color:var(--text-light);font-size:0.78rem;width:50px">{{ a.pk }}</td>
+          <td>
+            <div style="font-weight:600">{{ a.full_name }}</div>
+            <div style="font-size:0.75rem;color:var(--text-light)">{{ a.email }}</div>
+            {% if a.phone %}<div style="font-size:0.73rem;color:var(--text-light)">{{ a.phone }}</div>{% endif %}
+          </td>
+          <td style="font-size:0.82rem;max-width:150px">
+            <span style="display:inline-block;background:var(--bg);border:1px solid var(--border);padding:3px 8px;border-radius:6px;font-size:0.72rem;font-weight:600;color:var(--text-mid)">
+              {{ a.position }}
+            </span>
+          </td>
+          <td style="font-size:0.82rem;color:var(--text-mid)">{{ a.institution|default:"—" }}</td>
+          <td style="color:var(--text-light);font-size:0.78rem;white-space:nowrap">{{ a.submitted_at|date:"d M Y" }}</td>
+          <td>
+            {% if a.cv_file %}
+              <a href="{{ a.cv_file.url }}" target="_blank" download
+                 title="Download CV"
+                 style="display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;color:var(--blue);font-weight:600;text-decoration:none;background:#EFF6FF;border:1px solid #BFDBFE;padding:3px 9px;border-radius:6px;white-space:nowrap">
+                <i class="fas fa-file-arrow-down"></i> CV
+              </a>
+            {% else %}
+              <span style="font-size:0.72rem;color:var(--text-light)">—</span>
+            {% endif %}
+          </td>
+          <td><span class="badge {{ a.status }}">{{ a.get_status_display }}</span></td>
+          <td>
+            <div class="action-group">
+              <a href="{% url 'admin_application_detail' a.pk %}" class="btn btn-ghost btn-sm" title="View details">
+                <i class="fas fa-eye"></i>
+              </a>
+              <a href="mailto:{{ a.email }}" class="btn btn-ghost btn-sm" title="Email applicant">
+                <i class="fas fa-reply"></i>
+              </a>
+              <a href="{% url 'admin_application_delete' a.pk %}"
+                 class="btn btn-danger btn-sm"
+                 title="Delete"
+                 onclick="return confirm('Delete application from {{ a.full_name }}? This cannot be undone.')">
+                <i class="fas fa-trash"></i>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon"><i class="fas fa-folder-open"></i></div>
+      <h3>{% if q or status_filter or position_filter %}No results found{% else %}No applications yet{% endif %}</h3>
+      <p>{% if q or status_filter or position_filter %}Try adjusting your filters or <a href="{% url 'admin_applications' %}" style="color:var(--blue)">clear them</a>.{% else %}Internship applications will appear here once submitted.{% endif %}</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

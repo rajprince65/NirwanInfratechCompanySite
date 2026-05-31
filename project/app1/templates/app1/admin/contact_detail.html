@@ -1,0 +1,486 @@
+{% extends 'app1/admin/base.html' %}
+{% block title %}Contact — {{ contact.name }}{% endblock %}
+{% block page_title %}{{ contact.name }}{% endblock %}
+{% block breadcrumb %}
+  <a href="{% url 'admin_dashboard' %}">Home</a>
+  <i class="fas fa-chevron-right" style="font-size:0.6rem"></i>
+  <a href="{% url 'admin_contacts' %}">Contacts</a>
+  <i class="fas fa-chevron-right" style="font-size:0.6rem"></i>
+  <span>{{ contact.name }}</span>
+{% endblock %}
+
+{% block content %}
+<style>
+/* ── Page layout ── */
+.cd-page {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 0.875rem;
+  color: #111827;
+}
+
+/* ══════════════════════════════════════
+   LEFT COLUMN
+══════════════════════════════════════ */
+.cd-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── Action bar ── */
+.cd-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Base button */
+.cd-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.42rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.4;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  transition: background 0.12s, border-color 0.12s, box-shadow 0.12s;
+  font-family: inherit;
+  background: none;
+}
+.cd-btn:active { opacity: 0.85; }
+
+/* Ghost — Back to Inbox */
+.cd-btn-ghost {
+  background: #fff;
+  color: #374151;
+  border-color: #D1D5DB;
+}
+.cd-btn-ghost:hover { background: #F9FAFB; }
+
+/* Danger — Delete */
+.cd-btn-danger {
+  background: #fff;
+  color: #DC2626;
+  border-color: #FECACA;
+}
+.cd-btn-danger:hover { background: #FEF2F2; }
+
+/* Accent — Quick Reply */
+.cd-btn-accent {
+  background: #fff;
+  color: #374151;
+  border-color: #D1D5DB;
+}
+.cd-btn-accent:hover { background: #F9FAFB; }
+
+/* More Options */
+.cd-btn-more {
+  background: #fff;
+  color: #374151;
+  border-color: #D1D5DB;
+}
+.cd-btn-more:hover { background: #F9FAFB; }
+
+/* ── Main message card ── */
+.cd-card {
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+}
+
+/* Sender header row */
+.cd-sender {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1.1rem 1.4rem;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.cd-avatar {
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  border-radius: 50%;
+  background: #3B5BDB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.cd-sender-info { flex: 1; min-width: 0; }
+.cd-sender-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.3;
+}
+.cd-sender-email {
+  font-size: 0.78rem;
+  color: #6B7280;
+  text-decoration: none;
+}
+.cd-sender-email:hover { color: #2563EB; }
+
+/* Inline meta columns */
+.cd-meta-cols {
+  display: flex;
+  gap: 2rem;
+  flex-shrink: 0;
+}
+.cd-meta-col { text-align: left; }
+.cd-meta-label {
+  font-size: 0.7rem;
+  color: #9CA3AF;
+  font-weight: 500;
+  margin-bottom: 3px;
+  white-space: nowrap;
+}
+.cd-meta-value {
+  font-size: 0.8rem;
+  color: #374151;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.cd-status-read {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #6B7280;
+}
+.cd-status-read::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #9CA3AF;
+  flex-shrink: 0;
+}
+.cd-status-read.is-read::before { background: #10B981; }
+.cd-status-read.is-unread::before { background: #F59E0B; }
+
+/* Message body */
+.cd-message-body {
+  padding: 1.6rem 1.4rem 1.2rem;
+  font-size: 1.05rem;
+  color: #1F2937;
+  line-height: 1.7;
+  min-height: 110px;
+}
+
+/* Reply CTA row */
+.cd-reply-row {
+  padding: 0.8rem 1.4rem 1.4rem;
+  display: flex;
+  justify-content: center;
+}
+
+.cd-btn-reply {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.62rem 1.75rem;
+  background: #2563EB;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 2px 6px rgba(37,99,235,.3);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.cd-btn-reply:hover {
+  background: #1D4ED8;
+  box-shadow: 0 3px 10px rgba(37,99,235,.4);
+}
+
+/* ══════════════════════════════════════
+   RIGHT SIDEBAR
+══════════════════════════════════════ */
+.cd-sidebar {
+  width: 248px;
+  min-width: 248px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cd-info-card {
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  padding: 0 0 0.5rem;
+}
+
+/* Section block */
+.cd-section { padding: 1rem 1.25rem 0.25rem; }
+.cd-section-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #9CA3AF;
+  margin-bottom: 0.85rem;
+}
+
+/* Info row */
+.cd-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  margin-bottom: 0.85rem;
+}
+.cd-info-icon {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9CA3AF;
+  font-size: 0.75rem;
+  margin-top: 1px;
+}
+.cd-info-label {
+  font-size: 0.72rem;
+  color: #9CA3AF;
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+.cd-info-val {
+  font-size: 0.83rem;
+  font-weight: 500;
+  color: #1F2937;
+  line-height: 1.4;
+}
+.cd-info-val a { color: #1F2937; text-decoration: none; }
+.cd-info-val a:hover { color: #2563EB; }
+
+.cd-hr {
+  height: 1px;
+  background: #F3F4F6;
+  margin: 0 0 0.25rem;
+  border: none;
+}
+
+/* Read status pill */
+.cd-read-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  color: #374151;
+  font-weight: 500;
+}
+.cd-read-pill .dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #9CA3AF;
+  flex-shrink: 0;
+}
+.cd-read-pill.read .dot  { background: #10B981; }
+.cd-read-pill.unread .dot { background: #F59E0B; }
+
+/* Back to Contacts button */
+.cd-back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.58rem 1rem;
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  color: #374151;
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  transition: background 0.12s;
+  font-family: inherit;
+}
+.cd-back-btn:hover { background: #F9FAFB; }
+
+/* ── Responsive ── */
+@media (max-width: 720px) {
+  .cd-page { flex-direction: column; }
+  .cd-sidebar { width: 100%; min-width: 0; }
+  .cd-meta-cols { display: none; }
+}
+</style>
+
+<div class="cd-page">
+
+  <!-- ══ LEFT COLUMN ══ -->
+  <div class="cd-left">
+
+    <!-- Action bar -->
+    <div class="cd-actions">
+      <a href="{% url 'admin_contacts' %}" class="cd-btn cd-btn-ghost">
+        <i class="fas fa-arrow-left"></i> Back to Inbox
+      </a>
+      <a href="{% url 'admin_contact_delete' contact.pk %}"
+         class="cd-btn cd-btn-danger"
+         onclick="return confirm('Delete this contact? This cannot be undone.')">
+        Delete
+      </a>
+      <a href="mailto:{{ contact.email }}?subject=Re: Your enquiry to Nirwana Infratech"
+         class="cd-btn cd-btn-accent">
+        <i class="fas fa-bolt"></i> Quick Reply
+      </a>
+      <button class="cd-btn cd-btn-more" type="button">
+        <i class="fas fa-envelope"></i> More Options <i class="fas fa-chevron-down" style="font-size:0.6rem;margin-left:2px"></i>
+      </button>
+    </div>
+
+    <!-- Message card -->
+    <div class="cd-card">
+
+      <!-- Sender row -->
+      <div class="cd-sender">
+        <div class="cd-avatar">{{ contact.name|first|upper }}</div>
+        <div class="cd-sender-info">
+          <div class="cd-sender-name">{{ contact.name }}</div>
+          <a href="mailto:{{ contact.email }}" class="cd-sender-email">{{ contact.email }}</a>
+        </div>
+        <div class="cd-meta-cols">
+          <div class="cd-meta-col">
+            <div class="cd-meta-label">Record ID</div>
+            <div class="cd-meta-value">#{{ contact.pk }}</div>
+          </div>
+          <div class="cd-meta-col">
+            <div class="cd-meta-label">Submission Date</div>
+            <div class="cd-meta-value">{{ contact.submitted_at|date:"d M Y, H:i" }}</div>
+          </div>
+          <div class="cd-meta-col">
+            <div class="cd-meta-label">Status</div>
+            <div class="cd-meta-value">
+              {% if contact.is_read %}
+                <span class="cd-status-read is-read">Read</span>
+              {% else %}
+                <span class="cd-status-read is-unread">New</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message body -->
+      <div class="cd-message-body">{{ contact.message }}</div>
+
+      <!-- Reply CTA -->
+      <div class="cd-reply-row">
+        <a href="mailto:{{ contact.email }}?subject=Re: Your enquiry to Nirwana Infratech"
+           class="cd-btn-reply">
+          <i class="fas fa-reply"></i> Reply to {{ contact.name }}
+        </a>
+      </div>
+
+    </div><!-- /cd-card -->
+  </div><!-- /cd-left -->
+
+  <!-- ══ RIGHT SIDEBAR ══ -->
+  <div class="cd-sidebar">
+    <div class="cd-info-card">
+
+      <!-- Record Info -->
+      <div class="cd-section">
+        <div class="cd-section-title">Record Info</div>
+
+        <div class="cd-info-row">
+          <div class="cd-info-icon"><i class="fas fa-info-circle"></i></div>
+          <div>
+            <div class="cd-info-label">Record ID</div>
+            <div class="cd-info-val">#{{ contact.pk }}</div>
+          </div>
+        </div>
+
+        <div class="cd-info-row">
+          <div class="cd-info-icon"><i class="far fa-calendar-alt"></i></div>
+          <div>
+            <div class="cd-info-label">Submitted Date</div>
+            <div class="cd-info-val">{{ contact.submitted_at|date:"d M Y, H:i" }}</div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="cd-hr">
+
+      <!-- Contact Details -->
+      <div class="cd-section">
+        <div class="cd-section-title">Contact Details</div>
+
+        <div class="cd-info-row">
+          <div class="cd-info-icon"><i class="fas fa-phone-alt"></i></div>
+          <div>
+            <div class="cd-info-label">Phone</div>
+            <div class="cd-info-val">
+              {% if contact.phone %}
+                <a href="tel:{{ contact.phone }}">{{ contact.phone }}</a>
+              {% else %}<span style="color:#D1D5DB">—</span>{% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="cd-info-row">
+          <div class="cd-info-icon"><i class="fas fa-phone-alt"></i></div>
+          <div>
+            <div class="cd-info-label">Alternate Phone</div>
+            <div class="cd-info-val">
+              {% if contact.alternate_phone %}
+                <a href="tel:{{ contact.alternate_phone }}">{{ contact.alternate_phone }}</a>
+              {% else %}<span style="color:#D1D5DB">—</span>{% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="cd-hr">
+
+      <!-- Read Status -->
+      <div class="cd-section" style="padding-bottom:0.85rem">
+        <div class="cd-section-title">Read Status</div>
+        <div class="cd-info-row" style="margin-bottom:0">
+          <div class="cd-info-icon" style="visibility:hidden"></div>
+          <div style="display:flex;align-items:center;min-height:26px">
+            {% if contact.is_read %}
+              <span class="cd-read-pill read"><span class="dot"></span>Marked as read</span>
+            {% else %}
+              <span class="cd-read-pill unread"><span class="dot"></span>Not yet read</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /cd-info-card -->
+
+    <!-- Back to Contacts -->
+    <a href="{% url 'admin_contacts' %}" class="cd-back-btn">
+      <i class="fas fa-arrow-left"></i> Back to Contacts
+    </a>
+
+  </div><!-- /cd-sidebar -->
+
+</div><!-- /cd-page -->
+{% endblock %}

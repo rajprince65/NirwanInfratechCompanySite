@@ -1,0 +1,357 @@
+{% extends 'app1/admin/base.html' %}
+{% block title %}{% if action == 'Edit' %}Edit Program{% else %}New Training Program{% endif %}{% endblock %}
+{% block page_title %}{% if action == 'Edit' %}Edit Training Program{% else %}Add New Training Program{% endif %}{% endblock %}
+{% block breadcrumb %}
+  <a href="{% url 'admin_dashboard' %}">Home</a>
+  <i class="fas fa-chevron-right" style="font-size:0.6rem"></i>
+  <a href="{% url 'admin_training_programs' %}">Training Programs</a>
+  <i class="fas fa-chevron-right" style="font-size:0.6rem"></i>
+  <span>{% if action == 'Edit' %}Edit{% else %}New{% endif %}</span>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;gap:1.5rem;align-items:flex-start;flex-wrap:wrap">
+
+  <!-- ── Form card ─────────────────────────────── -->
+  <div style="flex:1;min-width:300px">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="title-icon" style="background:#EEF2FF;color:#6366f1">
+            <i class="fas fa-{% if action == 'Edit' %}pencil{% else %}plus{% endif %}"></i>
+          </span>
+          {% if action == 'Edit' %}Edit Program Details{% else %}Create New Training Program{% endif %}
+        </div>
+      </div>
+      <div class="card-body" style="padding:1.75rem">
+        <form method="POST">
+          {% csrf_token %}
+
+          <!-- Basic Info -->
+          <div class="form-section">
+            <div class="form-section-title"><i class="fas fa-info-circle"></i> Basic Information</div>
+
+            <div class="form-group">
+              <label>Program Title <span style="color:var(--red)">*</span></label>
+              <input type="text" name="title" placeholder="e.g. Full-Stack Mobile & Web Development"
+                     value="{% if program %}{{ program.title }}{% endif %}" required>
+            </div>
+
+            <div class="form-group">
+              <label>Subtitle / Tech Stack Line</label>
+              <input type="text" name="subtitle" placeholder="e.g. React Native · Next.js · Node.js · PostgreSQL"
+                     value="{% if program %}{{ program.subtitle }}{% endif %}">
+              <small style="color:var(--text-light);font-size:0.73rem;margin-top:3px;display:block">
+                Shown below the title on cards and the detail page hero.
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label>Description <span style="color:var(--red)">*</span></label>
+              <textarea name="description" rows="5" required
+                placeholder="Describe what this program covers, who it's for, and what students will build…">{% if program %}{{ program.description }}{% endif %}</textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Track / Category</label>
+                <select name="track">
+                  <option value="flagship" {% if program and program.track == 'flagship' %}selected{% endif %}>⭐ Flagship Program</option>
+                  <option value="dev"      {% if program and program.track == 'dev' %}selected{% endif %}>Dev Track</option>
+                  <option value="design"   {% if program and program.track == 'design' %}selected{% endif %}>Design Track</option>
+                  <option value="data"     {% if program and program.track == 'data' %}selected{% endif %}>Data Track</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Icon
+                  <span style="font-weight:400;color:var(--text-light);font-size:0.73rem">(Font Awesome name)</span>
+                </label>
+                <select name="icon">
+                  <option value="mobile-alt" {% if program and program.icon == 'mobile-alt' %}selected{% endif %}>📱 Mobile</option>
+                  <option value="globe"      {% if program and program.icon == 'globe' %}selected{% endif %}>🌐 Web / Globe</option>
+                  <option value="paint-brush" {% if program and program.icon == 'paint-brush' %}selected{% endif %}>🎨 Design</option>
+                  <option value="python"     {% if program and program.icon == 'python' %}selected{% endif %}>🐍 Python</option>
+                  <option value="code"       {% if program and program.icon == 'code' %}selected{% endif %}>💻 Code (general)</option>
+                  <option value="database"   {% if program and program.icon == 'database' %}selected{% endif %}>🗄️ Database</option>
+                  <option value="robot"      {% if program and program.icon == 'robot' %}selected{% endif %}>🤖 AI / ML</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group" style="display:flex;align-items:center;gap:0.5rem;padding-bottom:0.25rem">
+                <label class="toggle-label" style="margin:0">
+                  <input type="checkbox" name="is_featured"
+                    {% if program and program.is_featured %}checked{% endif %}>
+                  Mark as Featured (flagship dark-header style)
+                </label>
+              </div>
+              <div class="form-group" style="display:flex;align-items:center;gap:0.5rem;padding-bottom:0.25rem">
+                <label class="toggle-label" style="margin:0">
+                  <input type="checkbox" name="is_active"
+                    {% if not program or program.is_active %}checked{% endif %}>
+                  Active (visible on training page)
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Program Meta -->
+          <div class="form-section">
+            <div class="form-section-title"><i class="fas fa-sliders"></i> Program Details</div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Duration</label>
+                <input type="text" name="duration" placeholder="e.g. 16 Weeks"
+                       value="{% if program %}{{ program.duration }}{% endif %}">
+              </div>
+              <div class="form-group">
+                <label>Batch Size</label>
+                <input type="text" name="batch_size" placeholder="e.g. Max 10 per Batch"
+                       value="{% if program %}{{ program.batch_size }}{% else %}Max 10 per Batch{% endif %}">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Delivery Mode</label>
+                <input type="text" name="mode" placeholder="e.g. Offline / Online"
+                       value="{% if program %}{{ program.mode }}{% else %}Offline / Online{% endif %}">
+              </div>
+              <div class="form-group">
+                <label>Order (display position)</label>
+                <input type="number" name="order" min="0"
+                       value="{% if program %}{{ program.order }}{% else %}0{% endif %}">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group" style="display:flex;align-items:center;gap:0.5rem;padding-bottom:0.25rem">
+                <label class="toggle-label" style="margin:0">
+                  <input type="checkbox" name="certificate"
+                    {% if not program or program.certificate %}checked{% endif %}>
+                  Certificate Provided
+                </label>
+              </div>
+              <div class="form-group" style="display:flex;align-items:center;gap:0.5rem;padding-bottom:0.25rem">
+                <label class="toggle-label" style="margin:0">
+                  <input type="checkbox" name="career_support"
+                    {% if program and program.career_support %}checked{% endif %}>
+                  Career Support Included
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Price / Fee Label</label>
+              <input type="text" name="price_label" placeholder="e.g. Rs. 25,000 or Enrollment Fee — Contact Us"
+                     value="{% if program %}{{ program.price_label }}{% else %}Enrollment Fee — Contact Us{% endif %}">
+            </div>
+
+            <div class="form-group">
+              <label>WhatsApp Pre-filled Message</label>
+              <input type="text" name="whatsapp_text"
+                     placeholder="e.g. I'm interested in the Full-Stack training program."
+                     value="{% if program %}{{ program.whatsapp_text }}{% endif %}">
+              <small style="color:var(--text-light);font-size:0.73rem;margin-top:3px;display:block">
+                Sent when someone clicks "Enroll Now". Leave blank for a default message.
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label>Skills / Tech Tags</label>
+              <input type="text" name="skills_tags"
+                     placeholder="Comma-separated: React Native, Next.js, Node.js, PostgreSQL"
+                     value="{% if program %}{{ program.skills_tags }}{% endif %}">
+              <small style="color:var(--text-light);font-size:0.73rem;margin-top:3px;display:block">
+                Shown as tag pills on the card and detail page.
+              </small>
+            </div>
+          </div>
+
+          <!-- Syllabus -->
+          <div class="form-section">
+            <div class="form-section-title"><i class="fas fa-list-ul"></i> Syllabus (JSON)</div>
+            <div class="form-group">
+              <label>Syllabus JSON</label>
+              <textarea name="syllabus_json" rows="12"
+                style="font-family:monospace;font-size:0.8rem"
+                placeholder='[
+  {"week": "Week 1–2", "title": "Foundations", "topics": ["HTML & CSS basics", "JavaScript ES6+", "Git & GitHub"]},
+  {"week": "Week 3–4", "title": "React Fundamentals", "topics": ["Components & props", "State & hooks", "React Router"]}
+]'>{% if program %}{{ program.syllabus_json }}{% else %}[]{% endif %}</textarea>
+              <small style="color:var(--text-light);font-size:0.73rem;margin-top:4px;display:block;line-height:1.6">
+                JSON array. Each item needs <code>week</code>, <code>title</code>, and <code>topics</code> (array of strings).
+                The "View Syllabus" button and detail page accordion are powered by this.
+                Leave as <code>[]</code> to hide the syllabus button.
+              </small>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap">
+              <button type="button" class="btn btn-ghost btn-sm" onclick="validateJSON()">
+                <i class="fas fa-check-circle"></i> Validate JSON
+              </button>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="formatJSON()" style="border-color:#6366f1;color:#6366f1">
+                <i class="fas fa-magic"></i> Format &amp; Preview
+              </button>
+              <span id="jsonStatus" style="font-size:0.8rem"></span>
+            </div>
+            <!-- Live syllabus preview -->
+            <div id="syllabusPreview" style="display:none;margin-top:1rem;border:1px dashed #c7d2fe;border-radius:10px;padding:1rem;background:#f8f9ff">
+              <div style="font-size:0.72rem;font-weight:700;color:#6366f1;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:0.6rem"><i class="fas fa-eye"></i> Syllabus Preview</div>
+            </div>
+          </div>
+
+          <!-- Detail page content -->
+          <div class="form-section">
+            <div class="form-section-title"><i class="fas fa-file-lines"></i> Detail Page Content (optional)</div>
+            <div class="form-group">
+              <label>Who Should Join</label>
+              <textarea name="who_should_join" rows="5"
+                placeholder="One item per line, e.g.
+Students in BIT/BCA/BSc.CSIT
+Fresh graduates looking to build portfolio
+Career changers entering tech">{% if program %}{{ program.who_should_join }}{% endif %}</textarea>
+            </div>
+            <div class="form-group">
+              <label>Prerequisites / Requirements</label>
+              <textarea name="requirements" rows="4"
+                placeholder="One per line, e.g.
+Basic computer skills
+No prior coding experience required
+Access to a laptop">{% if program %}{{ program.requirements }}{% endif %}</textarea>
+            </div>
+            <div class="form-group">
+              <label>What Students Will Achieve</label>
+              <textarea name="outcomes" rows="5"
+                placeholder="One per line, e.g.
+Build and deploy a full-stack web application
+Publish a mobile app to the Play Store
+Receive a verified certificate from Nirwana">{% if program %}{{ program.outcomes }}{% endif %}</textarea>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div style="display:flex;gap:0.75rem;align-items:center;padding-top:0.5rem;border-top:1px solid var(--border)">
+            <button type="submit" class="btn btn-primary btn-lg">
+              <i class="fas fa-{% if action == 'Edit' %}check{% else %}plus{% endif %}"></i>
+              {% if action == 'Edit' %}Save Changes{% else %}Create Program{% endif %}
+            </button>
+            <a href="{% url 'admin_training_programs' %}" class="btn btn-ghost btn-lg">Cancel</a>
+            {% if action == 'Edit' %}
+            <a href="{% url 'admin_training_program_delete' program.pk %}"
+               class="btn btn-danger btn-lg"
+               style="margin-left:auto"
+               onclick="return confirm('Delete this program? This cannot be undone.')">
+              <i class="fas fa-trash"></i> Delete
+            </a>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tips sidebar -->
+  <div style="width:240px;flex-shrink:0">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title" style="font-size:0.82rem"><i class="fas fa-lightbulb" style="color:var(--orange)"></i> Tips</div>
+      </div>
+      <div class="card-body" style="padding:1.25rem;font-size:0.82rem;color:var(--text-mid);line-height:1.7;display:flex;flex-direction:column;gap:0.875rem">
+        <div>
+          <strong style="color:var(--text);display:block;margin-bottom:2px">Featured</strong>
+          Featured programs use the dark navy header style and appear first. Use for your flagship program.
+        </div>
+        <div>
+          <strong style="color:var(--text);display:block;margin-bottom:2px">Syllabus JSON</strong>
+          Powers the accordion on the detail page. <strong style="color:#e11d48">Always click "Format &amp; Preview" before saving</strong> — invalid JSON will silently hide the syllabus section. Each item needs <code>"week"</code>, <code>"title"</code>, and <code>"topics": [...]</code>.
+        </div>
+        <div>
+          <strong style="color:var(--text);display:block;margin-bottom:2px">Order</strong>
+          Lower number = appears first. Use 0 for featured, 1, 2, 3… for others.
+        </div>
+        <div>
+          <strong style="color:var(--text);display:block;margin-bottom:2px">Detail Page Content</strong>
+          "Who Should Join", "Prerequisites", and "Outcomes" appear as bullet sections on the program detail page.
+        </div>
+        <div>
+          <strong style="color:var(--text);display:block;margin-bottom:2px">WhatsApp Message</strong>
+          Customize the pre-filled text so you know which program the student is enquiring about.
+        </div>
+      </div>
+    </div>
+
+    {% if action == 'Edit' %}
+    <div style="margin-top:1rem">
+      <a href="{% url 'training_detail' program.pk %}" class="btn btn-ghost" style="width:100%;justify-content:center" target="_blank">
+        <i class="fas fa-eye"></i> Preview Detail Page
+      </a>
+    </div>
+    {% endif %}
+
+    <div style="margin-top:0.75rem">
+      <a href="{% url 'admin_training_programs' %}" class="btn btn-ghost" style="width:100%;justify-content:center">
+        <i class="fas fa-arrow-left"></i> Back to Programs
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<style>
+@media(max-width:700px){
+  [style*="width:240px"]{width:100%!important}
+}
+</style>
+
+<script>
+function validateJSON() {
+  const ta = document.querySelector('textarea[name="syllabus_json"]');
+  const status = document.getElementById('jsonStatus');
+  const preview = document.getElementById('syllabusPreview');
+  try {
+    const parsed = JSON.parse(ta.value);
+    if (!Array.isArray(parsed)) throw new Error('Must be a JSON array [ … ]');
+    for (let i = 0; i < parsed.length; i++) {
+      const w = parsed[i];
+      if (!w.week || !w.title) throw new Error(`Item ${i+1} is missing "week" or "title"`);
+      if (!Array.isArray(w.topics)) throw new Error(`Item ${i+1}: "topics" must be an array`);
+    }
+    // auto-format the textarea
+    ta.value = JSON.stringify(parsed, null, 2);
+    status.innerHTML = `<span style="color:var(--green)"><i class="fas fa-check-circle"></i> Valid — ${parsed.length} week(s). Auto-formatted ✓</span>`;
+
+    // render preview
+    if (preview) {
+      let html = '<div style="font-size:0.82rem;color:#1a2340">';
+      parsed.forEach((w, i) => {
+        html += `<div style="border:1px solid #d1d9f0;border-radius:10px;margin-bottom:10px;overflow:hidden">
+          <div style="background:#EAF4FF;padding:8px 14px;font-weight:700;display:flex;gap:8px;align-items:center">
+            <span style="background:linear-gradient(135deg,#00C2FF,#2563EB);color:#fff;font-size:0.68rem;padding:2px 8px;border-radius:50px">${w.week}</span>
+            <span>${w.title}</span>
+          </div>
+          <ul style="margin:0;padding:8px 14px 10px 28px;line-height:1.8;color:#4B5A7A">
+            ${w.topics.map(t => `<li>${t}</li>`).join('')}
+          </ul>
+        </div>`;
+      });
+      html += '</div>';
+      preview.innerHTML = html;
+      preview.style.display = 'block';
+    }
+  } catch(e) {
+    status.innerHTML = `<span style="color:var(--red)"><i class="fas fa-times-circle"></i> ${e.message}</span>`;
+    if (preview) preview.style.display = 'none';
+  }
+}
+
+function formatJSON() {
+  const ta = document.querySelector('textarea[name="syllabus_json"]');
+  try {
+    ta.value = JSON.stringify(JSON.parse(ta.value), null, 2);
+  } catch(e) { /* leave as-is if broken */ }
+  validateJSON();
+}
+</script>
+{% endblock %}

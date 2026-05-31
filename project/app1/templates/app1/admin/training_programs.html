@@ -1,0 +1,95 @@
+{% extends 'app1/admin/base.html' %}
+{% block title %}Training Programs{% endblock %}
+{% block page_title %}Training Programs{% endblock %}
+{% block breadcrumb %}<a href="{% url 'admin_dashboard' %}">Home</a> <i class="fas fa-chevron-right" style="font-size:0.6rem"></i> <span>Training Programs</span>{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <span class="title-icon" style="background:#EEF2FF;color:#6366f1"><i class="fas fa-graduation-cap"></i></span>
+      All Training Programs
+      <span style="background:var(--bg);border:1px solid var(--border);padding:2px 9px;border-radius:50px;font-size:0.68rem;color:var(--text-light);font-weight:600">
+        {{ programs|length }}
+      </span>
+    </div>
+    <a href="{% url 'admin_training_program_create' %}" class="btn btn-primary">
+      <i class="fas fa-plus"></i> Add Program
+    </a>
+  </div>
+
+  <div class="card-body">
+    {% if programs %}
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Program</th>
+          <th>Track</th>
+          <th>Duration</th>
+          <th>Featured</th>
+          <th>Status</th>
+          <th>Order</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in programs %}
+        <tr>
+          <td style="color:var(--text-light);font-size:0.78rem;width:50px">{{ p.pk }}</td>
+          <td>
+            <div style="font-weight:600">{{ p.title }}</div>
+            {% if p.subtitle %}<div style="font-size:0.73rem;color:var(--text-light);margin-top:2px">{{ p.subtitle|truncatechars:55 }}</div>{% endif %}
+          </td>
+          <td style="font-size:0.82rem;color:var(--text-mid)">{{ p.track_label }}</td>
+          <td style="font-size:0.82rem;color:var(--text-mid)">{{ p.duration|default:"—" }}</td>
+          <td>
+            {% if p.is_featured %}
+              <span class="badge active"><i class="fas fa-star" style="font-size:0.55rem"></i> Yes</span>
+            {% else %}
+              <span style="font-size:0.78rem;color:var(--text-light)">—</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if p.is_active %}
+              <span class="badge active"><i class="fas fa-circle" style="font-size:0.35rem"></i> Active</span>
+            {% else %}
+              <span class="badge inactive">Inactive</span>
+            {% endif %}
+          </td>
+          <td style="font-size:0.82rem;color:var(--text-mid)">{{ p.order }}</td>
+          <td>
+            <div class="action-group">
+              <a href="{% url 'training_detail' p.pk %}" class="btn btn-ghost btn-sm" title="View on site" target="_blank">
+                <i class="fas fa-eye"></i>
+              </a>
+              <a href="{% url 'admin_training_program_edit' p.pk %}" class="btn btn-ghost btn-sm" title="Edit">
+                <i class="fas fa-pencil"></i>
+              </a>
+              <a href="{% url 'admin_training_program_delete' p.pk %}"
+                 class="btn btn-danger btn-sm"
+                 title="Delete"
+                 onclick="return confirm('Delete program \"{{ p.title }}\"? This cannot be undone.')">
+                <i class="fas fa-trash"></i>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon"><i class="fas fa-graduation-cap"></i></div>
+      <h3>No training programs yet</h3>
+      <p>Add your first program to display it on the training page.</p>
+      <div style="margin-top:1.25rem">
+        <a href="{% url 'admin_training_program_create' %}" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Create First Program
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,519 @@
+{% extends 'app1/admin/base.html' %}
+{% block title %}{{ action }} Team Member{% endblock %}
+{% block page_title %}{{ action }} Team Member{% endblock %}
+{% block breadcrumb %}
+  <a href="{% url 'admin_dashboard' %}">Dashboard</a>
+  <a href="{% url 'admin_team_members' %}">Team Members</a>
+  <span>{{ action }}</span>
+{% endblock %}
+
+{% block content %}
+<style>
+  :root {
+    --brand: #5B4FE8;
+    --brand-light: #EEF0FF;
+    --brand-mid: #C7C5F8;
+    --surface: #FFFFFF;
+    --bg: #F7F8FC;
+    --border: #E4E6EF;
+    --border-focus: #5B4FE8;
+    --text: #181A20;
+    --text-2: #6B7280;
+    --text-3: #9CA3AF;
+    --red: #E53935;
+    --green: #16A34A;
+    --gold: #F59E0B;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(91,79,232,0.06);
+    --shadow-focus: 0 0 0 3px rgba(91,79,232,0.15);
+    --transition: 0.18s ease;
+  }
+
+  .tm-wrap {
+    max-width: 780px;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  /* ── Header ── */
+  .tm-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 32px;
+  }
+  .tm-header-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: var(--brand-light);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .tm-header-icon svg { width: 24px; height: 24px; color: var(--brand); }
+  .tm-header h1 { font-size: 22px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px; }
+  .tm-header p { font-size: 13.5px; color: var(--text-2); margin: 0; }
+
+  /* ── Section Card ── */
+  .tm-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .tm-section-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .tm-section-head .sec-icon {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: var(--brand-light);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .tm-section-head .sec-icon svg { width: 15px; height: 15px; color: var(--brand); }
+  .tm-section-head .sec-title { font-size: 13px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; color: var(--text-2); }
+  .tm-section-body { padding: 24px; }
+
+  /* ── Grid ── */
+  .tm-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 600px) { .tm-grid-2 { grid-template-columns: 1fr; } }
+
+  /* ── Field ── */
+  .tm-field { display: flex; flex-direction: column; gap: 6px; }
+  .tm-label {
+    font-size: 12.5px; font-weight: 600; color: var(--text-2);
+    display: flex; align-items: center; gap: 6px;
+    letter-spacing: 0.2px;
+  }
+  .tm-label svg { width: 13px; height: 13px; }
+  .tm-label .req { color: var(--red); margin-left: 2px; }
+
+  .tm-input, .tm-textarea, .tm-file-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    color: var(--text);
+    background: var(--surface);
+    transition: border-color var(--transition), box-shadow var(--transition);
+    outline: none;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+  .tm-input:hover, .tm-textarea:hover { border-color: #C4B9F7; }
+  .tm-input:focus, .tm-textarea:focus {
+    border-color: var(--border-focus);
+    box-shadow: var(--shadow-focus);
+  }
+  .tm-textarea { resize: vertical; min-height: 96px; line-height: 1.6; }
+  .tm-hint {
+    font-size: 11.5px; color: var(--text-3); display: flex; align-items: center; gap: 4px; margin-top: 2px;
+  }
+  .tm-hint svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+  /* ── Input with icon ── */
+  .tm-input-wrap { position: relative; }
+  .tm-input-wrap .inp-icon {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--text-3); display: flex; pointer-events: none;
+  }
+  .tm-input-wrap .inp-icon svg { width: 15px; height: 15px; }
+  .tm-input-wrap .tm-input { padding-left: 38px; }
+
+  /* ── Char counter textarea ── */
+  .tm-char-wrap { position: relative; }
+  .tm-char-count {
+    position: absolute; bottom: 10px; right: 12px;
+    font-size: 11px; color: var(--text-3);
+    pointer-events: none;
+  }
+  .tm-char-wrap .tm-textarea { padding-bottom: 28px; }
+
+  /* ── Photo block ── */
+  .tm-photo-area {
+    display: flex; align-items: center; gap: 20px;
+    padding: 18px 20px;
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    transition: border-color var(--transition);
+  }
+  .tm-photo-area:hover { border-color: var(--brand-mid); }
+  .tm-photo-avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    overflow: hidden; flex-shrink: 0;
+    border: 2px solid var(--brand-mid);
+    background: var(--brand-light);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tm-photo-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .tm-photo-avatar svg { width: 28px; height: 28px; color: var(--brand-mid); }
+  .tm-photo-meta { flex: 1; }
+  .tm-photo-meta .pm-title { font-size: 13.5px; font-weight: 600; margin-bottom: 2px; }
+  .tm-photo-meta .pm-sub { font-size: 12px; color: var(--text-2); margin-bottom: 10px; }
+  .tm-file-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: 7px;
+    border: 1.5px solid var(--border);
+    background: var(--surface); cursor: pointer;
+    font-size: 13px; font-weight: 500; color: var(--text);
+    transition: border-color var(--transition), background var(--transition);
+  }
+  .tm-file-btn:hover { border-color: var(--brand); background: var(--brand-light); color: var(--brand); }
+  .tm-file-btn svg { width: 14px; height: 14px; }
+  .tm-file-name { font-size: 12px; color: var(--text-3); margin-top: 5px; }
+
+  /* ── Toggle checks ── */
+  .tm-toggles { display: flex; gap: 14px; flex-wrap: wrap; }
+  .tm-toggle-card {
+    flex: 1; min-width: 200px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer; user-select: none;
+    background: var(--surface);
+    transition: border-color var(--transition), background var(--transition);
+  }
+  .tm-toggle-card:has(input:checked) { border-color: var(--brand); background: var(--brand-light); }
+  .tm-toggle-card input[type=checkbox] { display: none; }
+  .tm-toggle-indicator {
+    width: 20px; height: 20px; border-radius: 6px; flex-shrink: 0;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    transition: background var(--transition), border-color var(--transition);
+  }
+  .tm-toggle-card:has(input:checked) .tm-toggle-indicator {
+    background: var(--brand); border-color: var(--brand);
+  }
+  .tm-toggle-indicator svg { width: 12px; height: 12px; color: white; opacity: 0; transition: opacity 0.15s; }
+  .tm-toggle-card:has(input:checked) .tm-toggle-indicator svg { opacity: 1; }
+  .tm-toggle-label { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 500; }
+  .tm-toggle-label .badge-icon { font-size: 16px; }
+
+  /* ── Actions ── */
+  .tm-actions {
+    display: flex; gap: 10px; align-items: center;
+    padding: 20px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .btn-save {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 24px; border-radius: 9px;
+    background: var(--brand); color: white; border: none; cursor: pointer;
+    font-size: 14px; font-weight: 600; font-family: inherit;
+    transition: background var(--transition), transform 0.1s;
+    letter-spacing: 0.1px;
+  }
+  .btn-save:hover { background: #4A3FC6; }
+  .btn-save:active { transform: scale(0.98); }
+  .btn-save svg { width: 16px; height: 16px; }
+  .btn-cancel {
+    display: inline-flex; align-items: center;
+    padding: 10px 20px; border-radius: 9px;
+    background: var(--surface); color: var(--text-2);
+    border: 1.5px solid var(--border); cursor: pointer;
+    font-size: 14px; font-weight: 500; font-family: inherit;
+    text-decoration: none;
+    transition: border-color var(--transition), color var(--transition);
+  }
+  .btn-cancel:hover { border-color: #aaa; color: var(--text); }
+
+  /* ── Order badge ── */
+  .order-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--brand-light); color: var(--brand);
+    font-size: 13px; font-weight: 700;
+    margin-right: 6px;
+  }
+</style>
+
+<div class="tm-wrap">
+
+  <!-- Header -->
+  <div class="tm-header">
+    <div class="tm-header-icon">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM4 20c0-4 3.582-7 8-7s8 3 8 7"/>
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19 11l1.5 1.5L17 16l-2-2"/>
+      </svg>
+    </div>
+    <div>
+      <h1>{{ action }} Team Member</h1>
+      <p>Update team member information and profile details.</p>
+    </div>
+  </div>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Section 1: Basic Info -->
+    <div class="tm-section">
+      <div class="tm-section-head">
+        <div class="sec-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <circle cx="12" cy="8" r="4"/><path stroke-linecap="round" d="M4 20c0-3.314 3.582-6 8-6s8 2.686 8 6"/>
+          </svg>
+        </div>
+        <span class="sec-title">Basic Information</span>
+      </div>
+      <div class="tm-section-body">
+        <div class="tm-grid-2" style="margin-bottom:20px">
+          <div class="tm-field">
+            <label class="tm-label">
+              Full Name <span class="req">*</span>
+            </label>
+            <div class="tm-input-wrap">
+              <span class="inp-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                  <circle cx="12" cy="8" r="4"/><path stroke-linecap="round" d="M4 20c0-3.314 3.582-6 8-6s8 2.686 8 6"/>
+                </svg>
+              </span>
+              <input type="text" name="name" class="tm-input" required
+                     value="{{ member.name|default:'' }}"
+                     placeholder="e.g. Raj Shah">
+            </div>
+          </div>
+          <div class="tm-field">
+            <label class="tm-label">Role / Post <span class="req">*</span></label>
+            <div class="tm-input-wrap">
+              <span class="inp-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                  <rect x="2" y="7" width="20" height="14" rx="2"/><path stroke-linecap="round" d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                </svg>
+              </span>
+              <input type="text" name="post" class="tm-input" required
+                     value="{{ member.post|default:'' }}"
+                     placeholder="e.g. Founder &amp; CEO">
+            </div>
+          </div>
+        </div>
+
+        <div class="tm-field">
+          <label class="tm-label">Bio / Description</label>
+          <div class="tm-char-wrap">
+            <textarea name="description" class="tm-textarea"
+                      id="bio-field" maxlength="300"
+                      placeholder="Short bio shown on the About page carousel…">{{ member.description|default:'' }}</textarea>
+            <span class="tm-char-count" id="bio-count">0/300</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Social & Contact -->
+    <div class="tm-section">
+      <div class="tm-section-head">
+        <div class="sec-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" d="M13.828 10.172a4 4 0 0 0-5.656 0l-4 4a4 4 0 1 0 5.656 5.656l1.102-1.101"/>
+            <path stroke-linecap="round" d="M14.828 14.828a4 4 0 0 1 5.656 0l.707.707a4 4 0 0 1-5.656 5.656l-1.1-1.1"/>
+          </svg>
+        </div>
+        <span class="sec-title">Social &amp; Contact</span>
+      </div>
+      <div class="tm-section-body">
+        <div class="tm-grid-2" style="margin-bottom:20px">
+          <div class="tm-field">
+            <label class="tm-label">
+              <svg fill="none" stroke="#0A66C2" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                <rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>
+              </svg>
+              LinkedIn URL
+            </label>
+            <input type="url" name="linkedin" class="tm-input"
+                   value="{{ member.linkedin|default:'' }}"
+                   placeholder="https://linkedin.com/in/username">
+          </div>
+          <div class="tm-field">
+            <label class="tm-label">
+              <svg fill="currentColor" viewBox="0 0 24 24" style="color:#333">
+                <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+              </svg>
+              GitHub URL
+            </label>
+            <input type="url" name="github" class="tm-input"
+                   value="{{ member.github|default:'' }}"
+                   placeholder="https://github.com/username">
+          </div>
+        </div>
+        <div class="tm-grid-2">
+          <div class="tm-field">
+            <label class="tm-label">
+              <svg fill="none" stroke="#5B4FE8" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"/>
+              </svg>
+              Email
+            </label>
+            <input type="email" name="email" class="tm-input"
+                   value="{{ member.email|default:'' }}"
+                   placeholder="name@example.com">
+          </div>
+          <div class="tm-field">
+            <label class="tm-label">
+              <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" d="M3 7l9 6 9-6M3 7h18v13H3z"/>
+              </svg>
+              Display Order
+            </label>
+            <input type="number" name="order" class="tm-input" min="0"
+                   value="{{ member.order|default:'0' }}"
+                   placeholder="0">
+            <div class="tm-hint">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/><path stroke-linecap="round" d="M12 8v4m0 4h.01"/>
+              </svg>
+              Lower number = appears first in the carousel
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Profile Photo -->
+    <div class="tm-section">
+      <div class="tm-section-head">
+        <div class="sec-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="3"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 15l-5-5L5 21"/>
+          </svg>
+        </div>
+        <span class="sec-title">Profile Photo</span>
+      </div>
+      <div class="tm-section-body">
+        <div class="tm-photo-area" id="photo-drop">
+          <div class="tm-photo-avatar" id="avatar-preview">
+            {% if member.photo %}
+              <img src="{{ member.photo.url }}" alt="{{ member.name }}" id="avatar-img">
+            {% else %}
+              <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" id="avatar-placeholder">
+                <circle cx="12" cy="8" r="4"/><path stroke-linecap="round" d="M4 20c0-3.314 3.582-6 8-6s8 2.686 8 6"/>
+              </svg>
+            {% endif %}
+          </div>
+          <div class="tm-photo-meta">
+            {% if member.photo %}
+              <div class="pm-title">Current photo</div>
+              <div class="pm-sub">Upload a new file below to replace it</div>
+            {% else %}
+              <div class="pm-title">No photo yet</div>
+              <div class="pm-sub">JPG or PNG — square crop recommended</div>
+            {% endif %}
+            <label class="tm-file-btn" for="photo-input">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M16 12l-4-4-4 4M12 8v8"/>
+              </svg>
+              Choose File
+            </label>
+            <input type="file" name="photo" id="photo-input" class="tm-input" accept="image/*"
+                   style="position:absolute;opacity:0;width:0;height:0;pointer-events:none">
+            <div class="tm-file-name" id="file-name-label">No file chosen</div>
+          </div>
+        </div>
+        <div class="tm-hint" style="margin-top:10px">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/><path stroke-linecap="round" d="M12 8v4m0 4h.01"/>
+          </svg>
+          This photo appears in the team carousel on the About page.
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Visibility -->
+    <div class="tm-section">
+      <div class="tm-section-head">
+        <div class="sec-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </div>
+        <span class="sec-title">Badges &amp; Visibility</span>
+      </div>
+      <div class="tm-section-body">
+        <div class="tm-toggles">
+          <label class="tm-toggle-card">
+            <input type="checkbox" name="is_founder" {% if member.is_founder %}checked{% endif %}>
+            <div class="tm-toggle-indicator">
+              <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div class="tm-toggle-label">
+              <span class="badge-icon">👑</span>
+              Show Founder &amp; CEO crown badge
+            </div>
+          </label>
+          <label class="tm-toggle-card">
+            <input type="checkbox" name="is_active" {% if action == 'Add' or member.is_active %}checked{% endif %}>
+            <div class="tm-toggle-indicator">
+              <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div class="tm-toggle-label">
+              <span class="badge-icon">👁️</span>
+              Active — visible on About page
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Actions inside section footer -->
+      <div class="tm-actions">
+        <button type="submit" class="btn-save">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3m-1-4-3 3m0 0-3-3m3 3V3"/>
+          </svg>
+          Save Member
+        </button>
+        <a href="{% url 'admin_team_members' %}" class="btn-cancel">Cancel</a>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  (function () {
+    /* Bio char counter */
+    var bio = document.getElementById('bio-field');
+    var count = document.getElementById('bio-count');
+    if (bio && count) {
+      function updateCount() { count.textContent = bio.value.length + '/300'; }
+      updateCount();
+      bio.addEventListener('input', updateCount);
+    }
+
+    /* File picker preview */
+    var input = document.getElementById('photo-input');
+    var nameLabel = document.getElementById('file-name-label');
+    var avatarPreview = document.getElementById('avatar-preview');
+
+    if (input) {
+      input.addEventListener('change', function () {
+        var file = this.files[0];
+        if (!file) return;
+        nameLabel.textContent = file.name;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          avatarPreview.innerHTML = '<img src="' + e.target.result + '" alt="Preview" id="avatar-img" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block;">';
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  })();
+</script>
+{% endblock %}

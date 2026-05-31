@@ -1,0 +1,400 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Portal — Nirwana Infratech</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue: #3B6EF8;
+    --blue-light: #5B8FFF;
+    --cyan: #22D3EE;
+    --dark: #080C1A;
+    --dark2: #0E1525;
+    --dark3: #141C32;
+    --surface: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --text: #F0F4FF;
+    --text-muted: rgba(240,244,255,0.45);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    background: var(--dark);
+    display: grid;
+    place-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Background image layer */
+  .bg-image {
+    position: fixed; inset: 0; z-index: 0;
+    background-image: url("{% static 'app1/img/loginbg.jpg' %}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  /* Dark overlay on top of image */
+  .bg-overlay {
+    position: fixed; inset: 0; z-index: 1;
+    background: rgba(8, 12, 26, 0.72);
+  }
+
+  /* Gradient tint on top of overlay */
+  .bg {
+    position: fixed; inset: 0; z-index: 2;
+    background: radial-gradient(ellipse 80% 60% at 20% 10%, rgba(59,110,248,0.18) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 80% 90%, rgba(34,211,238,0.1) 0%, transparent 55%);
+  }
+
+  .grid-lines {
+    position: fixed; inset: 0; z-index: 3;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Animated orbs */
+  .orb {
+    position: fixed; border-radius: 50%;
+    filter: blur(80px); pointer-events: none;
+    animation: float 8s ease-in-out infinite;
+  }
+  .orb1 { width: 350px; height: 350px; background: rgba(59,110,248,0.15); top: -100px; left: -80px; z-index: 4; }
+  .orb2 { width: 280px; height: 280px; background: rgba(34,211,238,0.09); bottom: -60px; right: -60px; animation-delay: -4s; z-index: 4; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-30px) scale(1.05); }
+  }
+
+  /* Card */
+  .login-wrap {
+    position: relative; z-index: 10;
+    width: 100%; max-width: 440px;
+    padding: 0 1.5rem;
+  }
+
+  .login-card {
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 28px;
+    padding: 3rem 2.5rem 2.5rem;
+    box-shadow:
+      0 40px 100px rgba(0,0,0,0.5),
+      0 0 0 1px rgba(255,255,255,0.6) inset;
+    animation: cardIn 0.7s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(28px) scale(0.97); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* Header */
+  .card-header { text-align: center; margin-bottom: 2.5rem; }
+
+  .logo-mark {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 80px; height: 80px;
+    border-radius: 20px;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+    border: 1.5px solid rgba(59,110,248,0.15);
+    background: #f5f7ff;
+  }
+  .logo-mark img {
+    width: 100%; height: 100%; object-fit: contain;
+  }
+  .logo-mark .fallback-icon {
+    font-size: 1.6rem; color: var(--blue);
+  }
+
+  .card-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem; font-weight: 800;
+    color: #0D1530; letter-spacing: -0.3px;
+    margin-bottom: 0.35rem;
+  }
+  .card-header p {
+    font-size: 0.82rem; color: #7a8aaa;
+    font-weight: 300; letter-spacing: 0.3px;
+  }
+
+  /* Alert */
+  .alert {
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.2);
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.83rem; color: #c0392b;
+    animation: shake 0.4s ease;
+  }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)}
+  }
+
+  /* Form */
+  .form-group { margin-bottom: 1.2rem; }
+
+  .form-group label {
+    display: block;
+    font-size: 0.72rem; font-weight: 600;
+    color: #8899bb;
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+  }
+
+  .input-wrap { position: relative; }
+  .input-wrap .icon {
+    position: absolute; left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: #b0bcd0; font-size: 0.85rem;
+    pointer-events: none; transition: color 0.2s;
+  }
+  .input-wrap:focus-within .icon { color: var(--blue); }
+
+  .input-wrap input {
+    width: 100%;
+    background: #f7f9fd;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 0.85rem 1rem 0.85rem 2.75rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; color: #1a2540;
+    outline: none; transition: all 0.25s;
+  }
+  .input-wrap input::placeholder { color: #b0bcd0; }
+  .input-wrap input:focus {
+    border-color: var(--blue);
+    background: #f0f4ff;
+    box-shadow: 0 0 0 4px rgba(59,110,248,0.1);
+  }
+
+  .eye-toggle {
+    position: absolute; right: 14px; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    color: #b0bcd0; font-size: 0.85rem;
+    transition: color 0.2s; padding: 0;
+  }
+  .eye-toggle:hover { color: #7a8aaa; }
+
+  /* Submit */
+  .submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--blue), var(--blue-light));
+    border: none; border-radius: 14px;
+    padding: 0.95rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem; font-weight: 700;
+    color: white; cursor: pointer;
+    transition: all 0.25s;
+    margin-top: 0.5rem;
+    box-shadow: 0 8px 32px rgba(59,110,248,0.35);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    position: relative; overflow: hidden;
+  }
+  .submit-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    opacity: 0; transition: opacity 0.25s;
+  }
+  .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(59,110,248,0.45); }
+  .submit-btn:hover::before { opacity: 1; }
+  .submit-btn:active { transform: translateY(0); }
+
+  /* Divider */
+  .divider {
+    display: flex; align-items: center; gap: 1rem;
+    margin: 1.75rem 0 1.25rem;
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1;
+    height: 1px; background: #e8edf5;
+  }
+  .divider span { font-size: 0.72rem; color: #aab5cc; white-space: nowrap; }
+
+  /* Back link */
+  .back-link { text-align: center; }
+  .back-link a {
+    color: #8899bb; font-size: 0.83rem;
+    text-decoration: none; transition: color 0.2s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .back-link a:hover { color: #0D1530; }
+
+  /* Security note */
+  .security-note {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    margin-top: 1.5rem;
+    font-size: 0.73rem; color: #c0cce0;
+  }
+  .security-note i { font-size: 0.7rem; }
+
+  /* Loading state on submit */
+  .submit-btn.loading {
+    pointer-events: none;
+    opacity: 0.8;
+  }
+  .submit-btn.loading .btn-text { display: none; }
+  .submit-btn .btn-spinner { display: none; }
+  .submit-btn.loading .btn-spinner { display: inline-block; }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  .spinner-icon {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+  }
+</style>
+</head>
+<body>
+
+<!-- Background layers (bottom to top): image → dark overlay → gradient tint → grid → orbs → card -->
+<div class="bg-image"></div>
+<div class="bg-overlay"></div>
+<div class="bg"></div>
+<div class="grid-lines"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<div class="login-wrap">
+  <div class="login-card">
+
+    <div class="card-header">
+      <div class="logo-mark">
+        <img src="{% static 'app1/img/logo.png' %}" alt="Nirwana Infratech Logo"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='inline';">
+        <i class="fas fa-shield-halved fallback-icon" style="display:none;"></i>
+      </div>
+      <h1>Admin Portal</h1>
+      <p>Nirwana Infratech Engineering Pvt. Ltd.</p>
+    </div>
+
+    {% if messages %}
+      {% for msg in messages %}
+      <div class="alert">
+        <i class="fas fa-triangle-exclamation"></i>
+        {{ msg }}
+      </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="POST" action="{% url 'admin_login' %}" id="loginForm">
+      {% csrf_token %}
+
+      <!-- ── Email field (replaces username) ── -->
+      <div class="form-group">
+        <label for="emailField">Email Address</label>
+        <div class="input-wrap">
+          <input
+            type="email"
+            id="emailField"
+            name="email"
+            placeholder="admin@example.com"
+            required
+            autofocus
+            autocomplete="email"
+            value="{{ request.POST.email|default:'' }}"
+          >
+          <span class="icon"><i class="fas fa-envelope"></i></span>
+        </div>
+      </div>
+
+      <!-- ── Password field ── -->
+      <div class="form-group">
+        <label for="pwField">Password</label>
+        <div class="input-wrap">
+          <input
+            type="password"
+            name="password"
+            id="pwField"
+            placeholder="Enter your password"
+            required
+            autocomplete="current-password"
+          >
+          <span class="icon"><i class="fas fa-lock"></i></span>
+          <button type="button" class="eye-toggle" onclick="togglePw()" id="eyeBtn" aria-label="Toggle password visibility">
+            <i class="fas fa-eye" id="eyeIcon"></i>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span class="btn-text">
+          <i class="fas fa-arrow-right-to-bracket"></i>
+          Sign In to Dashboard
+        </span>
+        <span class="btn-spinner">
+          <span class="spinner-icon"></span>
+          Signing in…
+        </span>
+      </button>
+    </form>
+
+    <div class="divider"><span>or</span></div>
+
+    <div class="back-link">
+      <a href="{% url 'home' %}">
+        <i class="fas fa-arrow-left"></i>
+        Return to Website
+      </a>
+    </div>
+
+    <div class="security-note">
+      <i class="fas fa-lock"></i>
+      Secured · Staff access only
+    </div>
+
+  </div>
+</div>
+
+<script>
+  /* Toggle password visibility */
+  function togglePw() {
+    const f = document.getElementById('pwField');
+    const i = document.getElementById('eyeIcon');
+    if (f.type === 'password') {
+      f.type = 'text';
+      i.className = 'fas fa-eye-slash';
+    } else {
+      f.type = 'password';
+      i.className = 'fas fa-eye';
+    }
+  }
+
+  /* Show loading state on submit */
+  document.getElementById('loginForm').addEventListener('submit', function () {
+    const btn = document.getElementById('submitBtn');
+    btn.classList.add('loading');
+  });
+
+  /* Auto-dismiss alerts after 5 seconds */
+  document.querySelectorAll('.alert').forEach(function (el) {
+    setTimeout(function () {
+      el.style.transition = 'opacity 0.4s ease';
+      el.style.opacity = '0';
+      setTimeout(function () { el.remove(); }, 400);
+    }, 5000);
+  });
+</script>
+</body>
+</html>

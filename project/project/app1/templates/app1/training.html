@@ -1,0 +1,759 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Programs — Nirwana Infratech Engineering Pvt. Ltd</title>
+    <meta name="description" content="Join our structured training programs in full-stack mobile development, UI/UX design, Python and more. Learn from mentors, build real projects, get certified.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --white:#ffffff; --off-white:#F8FAFF; --sky-soft:#EAF4FF; --sky-mid:#D6EEFF;
+            --cyan:#00C2FF; --royal:#2563EB; --royal-dark:#1D4ED8; --navy:#0F1F5C;
+            --text:#1a2340; --text-mid:#4B5A7A; --text-light:#8A97B5;
+            --border:rgba(37,99,235,0.12); --border-cyan:rgba(0,194,255,0.25);
+            --grad:linear-gradient(135deg,#00C2FF 0%,#2563EB 100%);
+            --grad-soft:linear-gradient(135deg,#EAF4FF 0%,#D6EEFF 100%);
+            --shadow:0 4px 24px rgba(37,99,235,0.10);
+            --shadow-lg:0 20px 60px rgba(37,99,235,0.15); --radius:16px;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        html{scroll-behavior:smooth}
+        body{font-family:"Outfit",sans-serif;background:var(--white);color:var(--text);overflow-x:hidden}
+        h1,h2,h3,h4{font-family:"Clash Display",sans-serif}
+
+        /* SCROLL PROGRESS */
+        #scroll-bar{position:fixed;top:0;left:0;height:3px;width:0%;background:var(--grad);z-index:9999;transition:width 0.1s linear}
+
+        /* CURSOR */
+        .cursor-glow{position:fixed;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,194,255,0.06) 0%,transparent 70%);pointer-events:none;z-index:0;transform:translate(-50%,-50%);transition:left 0.4s ease,top 0.4s ease}
+
+        /* LOADER */
+        #loader{position:fixed;inset:0;background:white;z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.5rem}
+        .loader-logo{font-family:"Clash Display",sans-serif;font-size:1.8rem;font-weight:700;color:var(--royal)}
+        .loader-bar{width:200px;height:3px;background:var(--sky-mid);border-radius:2px;overflow:hidden}
+        .loader-fill{height:100%;background:var(--grad);border-radius:2px;animation:loadFill 1.8s ease forwards}
+        @keyframes loadFill{from{width:0}to{width:100%}}
+
+        /* ═══════════════════════════════════════════
+           NAVBAR — Transparent on hero, white on scroll
+           (same pattern as about.html / careers.html)
+        ═══════════════════════════════════════════ */
+        .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:transparent;backdrop-filter:blur(0px);border-bottom:1px solid transparent;transition:all 0.4s ease}
+        .navbar.scrolled{background:rgba(255,255,255,0.96);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);box-shadow:0 4px 30px rgba(37,99,235,0.08)}
+        .nav-inner{max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:72px}
+        .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+        .logo-mark{width:42px;height:42px;background:var(--grad);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(37,99,235,0.3);animation:logoPulse 3s ease-in-out infinite}
+        @keyframes logoPulse{0%,100%{box-shadow:0 4px 16px rgba(37,99,235,0.3)}50%{box-shadow:0 4px 24px rgba(0,194,255,0.5)}}
+        .logo-mark svg{width:22px;height:22px}
+        .logo-txt .brand{font-family:"Clash Display",sans-serif;font-size:1.05rem;font-weight:700;color:white;letter-spacing:0.5px}
+        .logo-txt .sub{font-size:0.6rem;color:rgba(255,255,255,0.7);letter-spacing:1px;text-transform:uppercase}
+        .navbar.scrolled .logo-txt .brand{color:var(--navy)}
+        .navbar.scrolled .logo-txt .sub{color:var(--text-light)}
+        .nav-menu{display:flex;align-items:center;gap:0.25rem;list-style:none}
+        .nav-menu a{color:rgba(255,255,255,0.9);font-size:0.875rem;font-weight:500;text-decoration:none;padding:0.45rem 0.9rem;border-radius:8px;transition:all 0.2s}
+        .nav-menu a:hover,.nav-menu a.active{background:rgba(255,255,255,0.15);color:white}
+        .navbar.scrolled .nav-menu a{color:var(--text-mid)}
+        .navbar.scrolled .nav-menu a:hover,.navbar.scrolled .nav-menu a.active{color:var(--royal);background:var(--sky-soft)}
+        .nav-cta{background:rgba(255,255,255,0.15);color:white;padding:0.55rem 1.4rem;border-radius:50px;font-size:0.85rem;font-weight:600;text-decoration:none;transition:all 0.25s;display:flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,0.3);backdrop-filter:blur(10px)}
+        .nav-cta:hover{background:rgba(255,255,255,0.25);color:white;transform:translateY(-1px)}
+        .navbar.scrolled .nav-cta{background:var(--grad);border-color:transparent;box-shadow:0 4px 14px rgba(37,99,235,0.25)}
+        .navbar.scrolled .nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,99,235,0.35)}
+        .nav-hamburger{display:none;background:none;border:1.5px solid rgba(255,255,255,0.4);color:white;padding:0.4rem 0.65rem;border-radius:8px;font-size:1rem;cursor:pointer}
+        .navbar.scrolled .nav-hamburger{border-color:var(--border-cyan);color:var(--royal)}
+        .mobile-nav{display:none;position:fixed;inset:0;z-index:990;background:rgba(255,255,255,0.98);backdrop-filter:blur(20px);flex-direction:column;align-items:center;justify-content:center;gap:2.5rem}
+        .mobile-nav.open{display:flex}
+        .mobile-nav a{font-family:"Clash Display",sans-serif;font-size:2rem;font-weight:700;color:var(--navy);text-decoration:none}
+        .mobile-nav a:hover{color:var(--royal)}
+        .mobile-close{position:absolute;top:1.5rem;right:1.5rem;background:none;border:none;font-size:1.5rem;color:var(--navy);cursor:pointer}
+
+        /* ═══════════════════════════════════════════════════════
+           TRAINING HERO — Spectacular animated dark header
+           Code matrix + floating tech tags + glowing orbs
+        ═══════════════════════════════════════════════════════ */
+        .training-hero {
+            min-height: 92vh;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(160deg, #050d2e 0%, #0a1645 35%, #0d1f5c 65%, #071538 100%);
+        }
+
+        /* Animated grid lines */
+        .hero-grid-lines {
+            position: absolute; inset: 0; pointer-events: none;
+            background-image:
+                linear-gradient(rgba(37,99,235,0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(37,99,235,0.07) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridShift 20s linear infinite;
+        }
+        @keyframes gridShift { from{background-position:0 0} to{background-position:60px 60px} }
+
+        /* Glowing orbs */
+        .hero-orb {
+            position: absolute; border-radius: 50%; pointer-events: none; filter: blur(80px);
+        }
+        .orb-1 { width: 600px; height: 600px; background: rgba(37,99,235,0.2); top: -100px; left: -150px; animation: orbDrift 14s ease-in-out infinite; }
+        .orb-2 { width: 500px; height: 500px; background: rgba(0,194,255,0.12); bottom: -100px; right: -100px; animation: orbDrift 11s 3s ease-in-out infinite reverse; }
+        .orb-3 { width: 300px; height: 300px; background: rgba(99,102,241,0.1); top: 50%; left: 50%; transform: translate(-50%,-50%); animation: orbDrift 9s 1.5s ease-in-out infinite; }
+        @keyframes orbDrift { 0%,100%{transform:translate(0,0)} 50%{transform:translate(25px,-30px)} }
+        .orb-3 { animation: orb3Drift 9s 1.5s ease-in-out infinite; }
+        @keyframes orb3Drift { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-50%,-50%) scale(1.15)} }
+
+        /* Spinning dashed rings */
+        .hero-ring {
+            position: absolute; border-radius: 50%; pointer-events: none;
+            border: 1px dashed rgba(255,255,255,0.06);
+        }
+        .ring-1 { width: 500px; height: 500px; top: 50%; left: 50%; transform: translate(-50%,-50%); animation: spin 60s linear infinite; }
+        .ring-2 { width: 720px; height: 720px; top: 50%; left: 50%; transform: translate(-50%,-50%); border-color: rgba(0,194,255,0.05); animation: spin 90s linear infinite reverse; }
+        .ring-3 { width: 320px; height: 320px; top: 50%; right: 8%; transform: translateY(-50%); border-color: rgba(37,99,235,0.1); animation: spin 40s linear infinite; }
+        @keyframes spin { from{transform:translate(-50%,-50%) rotate(0deg)} to{transform:translate(-50%,-50%) rotate(360deg)} }
+
+        /* Floating code tags */
+        .code-tag {
+            position: absolute; pointer-events: none;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px); border-radius: 10px;
+            padding: 0.5rem 0.9rem; font-family: 'Courier New', monospace;
+            font-size: 0.75rem; color: rgba(0,194,255,0.8); white-space: nowrap;
+        }
+        .ct-1 { top: 15%; left: 5%; animation: floatTag 7s ease-in-out infinite; }
+        .ct-2 { top: 22%; right: 6%; animation: floatTag 9s 1s ease-in-out infinite; }
+        .ct-3 { top: 62%; left: 3%; animation: floatTag 8s 2s ease-in-out infinite; }
+        .ct-4 { bottom: 18%; right: 5%; animation: floatTag 6s 0.5s ease-in-out infinite; }
+        .ct-5 { top: 42%; right: 12%; animation: floatTag 10s 3s ease-in-out infinite; font-size: 0.7rem; color: rgba(99,246,130,0.7); }
+        .ct-6 { top: 78%; left: 12%; animation: floatTag 8.5s 1.5s ease-in-out infinite; color: rgba(251,191,36,0.7); }
+        @keyframes floatTag {
+            0%,100%{transform:translateY(0) rotate(-1deg)} 50%{transform:translateY(-14px) rotate(1deg)}
+        }
+        @media(max-width:900px){.code-tag{display:none}}
+
+        /* Particle dots */
+        .particle {
+            position: absolute; width: 3px; height: 3px; border-radius: 50%;
+            background: rgba(0,194,255,0.5); pointer-events: none;
+        }
+        .p1{top:25%;left:30%;animation:particleFloat 5s ease-in-out infinite}
+        .p2{top:70%;left:20%;animation:particleFloat 7s 1s ease-in-out infinite}
+        .p3{top:40%;right:25%;animation:particleFloat 6s 2s ease-in-out infinite}
+        .p4{top:80%;right:35%;animation:particleFloat 8s 0.5s ease-in-out infinite;background:rgba(99,246,130,0.5)}
+        .p5{top:15%;left:60%;animation:particleFloat 4.5s 1.8s ease-in-out infinite}
+        @keyframes particleFloat{0%,100%{transform:translateY(0);opacity:0.5}50%{transform:translateY(-20px);opacity:1}}
+
+        /* Hero content */
+        .hero-content-wrap {
+            position: relative; z-index: 4; text-align: center;
+            max-width: 860px; padding: 0 2rem;
+            animation: heroFadeIn 0.9s ease both;
+        }
+        @keyframes heroFadeIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(0,194,255,0.3);
+            color: rgba(255,255,255,0.95); padding: 0.45rem 1.2rem; border-radius: 50px;
+            font-size: 0.76rem; font-weight: 600; letter-spacing: 1.2px;
+            text-transform: uppercase; margin-bottom: 2rem; backdrop-filter: blur(12px);
+            animation: heroFadeIn 0.7s 0.1s ease both;
+        }
+        .badge-glow { width: 8px; height: 8px; background: var(--cyan); border-radius: 50%; animation: badgeGlow 1.5s ease infinite; box-shadow: 0 0 8px rgba(0,194,255,0.8); }
+        @keyframes badgeGlow{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.7)}}
+
+        .hero-title {
+            font-size: clamp(2.8rem, 6vw, 4.2rem); font-weight: 700; color: white;
+            line-height: 1.06; margin-bottom: 1.6rem; letter-spacing: -0.5px;
+            text-shadow: 0 2px 40px rgba(0,0,0,0.4);
+            animation: heroFadeIn 0.7s 0.15s ease both;
+        }
+        .hero-title .grad-text {
+            background: linear-gradient(135deg, #00C2FF, #60A5FA, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-desc {
+            font-size: 1.1rem; color: rgba(255,255,255,0.7); line-height: 1.8;
+            max-width: 620px; margin: 0 auto 2.8rem;
+            animation: heroFadeIn 0.7s 0.25s ease both;
+        }
+
+        /* Stats row inside hero */
+        .hero-stats-row {
+            display: flex; justify-content: center; gap: 3rem;
+            margin-bottom: 3rem;
+            animation: heroFadeIn 0.7s 0.35s ease both;
+        }
+        .hstat { text-align: center; }
+        .hstat-val { font-family: "Clash Display", sans-serif; font-size: 1.8rem; font-weight: 700; color: white; line-height: 1; }
+        .hstat-val span { background: linear-gradient(135deg,#00C2FF,#60A5FA); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .hstat-lbl { font-size: 0.72rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 4px; }
+
+        .hero-actions {
+            display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+            animation: heroFadeIn 0.7s 0.4s ease both;
+        }
+        .btn-hero-primary { background: var(--grad); color: white; padding: 0.9rem 2.2rem; border-radius: 50px; font-weight: 600; font-size: 0.95rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 8px 28px rgba(37,99,235,0.45); transition: all 0.3s; }
+        .btn-hero-primary:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(37,99,235,0.55); color: white; }
+        .btn-hero-outline { background: rgba(255,255,255,0.07); color: white; padding: 0.9rem 2.2rem; border-radius: 50px; font-weight: 600; font-size: 0.95rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid rgba(255,255,255,0.2); transition: all 0.3s; backdrop-filter: blur(10px); }
+        .btn-hero-outline:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.5); color: white; transform: translateY(-2px); }
+
+        /* Bottom wave */
+        .hero-wave {
+            position: absolute; bottom: -1px; left: 0; right: 0; z-index: 3;
+        }
+        .hero-wave svg { width: 100%; height: auto; display: block; }
+
+        /* BREADCRUMB */
+        .breadcrumb-bar{background:var(--sky-soft);border-bottom:1px solid var(--border);padding:0.75rem 2rem}
+        .breadcrumb-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--text-light)}
+        .breadcrumb-inner a{color:var(--royal);text-decoration:none;font-weight:500}
+        .breadcrumb-inner a:hover{text-decoration:underline}
+
+        /* SECTION COMMON */
+        .section{padding:5rem 2rem;position:relative}
+        .section-inner{max-width:1200px;margin:0 auto}
+        .section-label{display:inline-flex;align-items:center;gap:8px;background:var(--sky-soft);border:1px solid var(--border-cyan);border-radius:50px;padding:0.35rem 1rem;font-size:0.75rem;font-weight:600;color:var(--royal);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:1rem}
+        .section-title{font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:700;color:var(--navy);margin-bottom:1rem;line-height:1.2}
+        .section-title span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .section-sub{color:var(--text-mid);font-size:1.05rem;line-height:1.7;max-width:580px}
+        .sec-bg{background:var(--off-white)}
+
+        /* HOW IT WORKS */
+        .how-header{text-align:center;margin-bottom:4rem}
+        .how-header .section-sub{margin:0 auto}
+        .steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;position:relative}
+        .steps-grid::before{content:"";position:absolute;top:44px;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,var(--border-cyan) 20%,var(--border-cyan) 80%,transparent);z-index:0}
+        .step-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:2rem 1.5rem;position:relative;z-index:1;transition:all 0.3s ease}
+        .step-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:var(--border-cyan)}
+        .step-num{width:56px;height:56px;border-radius:14px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-family:"Clash Display",sans-serif;font-size:1.3rem;font-weight:700;color:white;margin-bottom:1.5rem;box-shadow:0 8px 20px rgba(37,99,235,0.25)}
+        .step-card h3{font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:0.6rem}
+        .step-card p{color:var(--text-mid);font-size:0.86rem;line-height:1.7}
+
+        /* INCLUDED */
+        .included-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-top:3rem}
+        .included-card{display:flex;align-items:flex-start;gap:1.2rem;background:var(--off-white);border:1px solid var(--border);border-radius:var(--radius);padding:1.8rem;transition:all 0.3s}
+        .included-card:hover{border-color:var(--border-cyan);box-shadow:var(--shadow);transform:translateY(-3px)}
+        .included-icon{width:48px;height:48px;flex-shrink:0;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;box-shadow:0 6px 16px rgba(37,99,235,0.2)}
+        .included-card h4{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:0.4rem}
+        .included-card p{font-size:0.88rem;color:var(--text-mid);line-height:1.6}
+
+        /* COURSES */
+        .courses-section{background:var(--off-white)}
+        .courses-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3rem;flex-wrap:wrap;gap:1rem}
+        .courses-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:2rem}
+        .course-card{background:white;border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:all 0.3s ease;display:flex;flex-direction:column}
+        .course-card:hover{transform:translateY(-8px);box-shadow:var(--shadow-lg);border-color:var(--border-cyan)}
+        .course-header{padding:2rem 2rem 1.5rem;background:var(--grad-soft);border-bottom:1px solid var(--border)}
+        .course-badge{display:inline-block;background:var(--grad);color:white;font-size:0.7rem;font-weight:700;padding:0.25rem 0.8rem;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:1rem}
+        .course-title{font-size:1.25rem;font-weight:700;color:var(--navy);margin-bottom:0.5rem}
+        .course-subtitle{font-size:0.85rem;color:var(--text-mid)}
+        .course-meta{display:flex;flex-wrap:wrap;gap:0.6rem;padding:1.2rem 2rem;border-bottom:1px solid var(--border)}
+        .meta-tag{display:flex;align-items:center;gap:6px;font-size:0.78rem;font-weight:500;color:var(--text-mid);background:var(--sky-soft);border:1px solid var(--border);border-radius:50px;padding:0.25rem 0.8rem}
+        .meta-tag i{color:var(--royal);font-size:0.7rem}
+        .course-body{padding:1.5rem 2rem;flex:1}
+        .course-body p{color:var(--text-mid);font-size:0.9rem;line-height:1.7;margin-bottom:1.2rem}
+        .course-tags{display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.5rem}
+        .skill-tag{font-size:0.75rem;font-weight:500;color:var(--royal);background:var(--sky-soft);border:1px solid var(--border-cyan);border-radius:6px;padding:0.2rem 0.7rem}
+        .course-footer{padding:1.5rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+        .course-price{font-family:"Clash Display",sans-serif;font-size:1.05rem;font-weight:700;color:var(--navy)}
+        .course-price span{font-size:0.8rem;font-weight:400;color:var(--text-light);font-family:"Outfit",sans-serif}
+        .btn-enroll{background:var(--grad);color:white;font-size:0.85rem;font-weight:600;padding:0.65rem 1.5rem;border-radius:50px;text-decoration:none;transition:all 0.3s;box-shadow:0 4px 14px rgba(37,99,235,0.25);white-space:nowrap}
+        .btn-enroll:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(37,99,235,0.35);color:white}
+
+        /* FEATURED COURSE */
+        .featured-course{grid-column:1 / -1}
+        .featured-course .course-header{background:var(--navy)}
+        .featured-course .course-title{color:white}
+        .featured-course .course-subtitle{color:rgba(255,255,255,0.65)}
+        .featured-course .course-badge{background:linear-gradient(135deg,#f59e0b,#ef4444) !important}
+        .featured-tech-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.2rem 0}
+        .tech-block{background:var(--sky-soft);border:1px solid var(--border-cyan);border-radius:12px;padding:1rem 1.2rem}
+        .tech-block h5{font-size:0.8rem;font-weight:700;color:var(--royal);margin-bottom:0.6rem;text-transform:uppercase;letter-spacing:0.5px}
+        .tech-block ul{list-style:none}
+        .tech-block ul li{font-size:0.82rem;color:var(--text-mid);padding:0.2rem 0;display:flex;align-items:center;gap:6px}
+        .tech-block ul li::before{content:"›";color:var(--cyan);font-weight:700}
+
+        /* CTA */
+        .cta-section{background:var(--navy);padding:5rem 2rem;text-align:center;position:relative;overflow:hidden}
+        .cta-section::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 50% 50%,rgba(0,194,255,0.12) 0%,transparent 70%)}
+        .cta-section h2{font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:700;color:white;margin-bottom:1rem;position:relative}
+        .cta-section h2 span{background:linear-gradient(135deg,#00C2FF,#60A5FA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .cta-section p{color:rgba(255,255,255,0.65);font-size:1.05rem;max-width:520px;margin:0 auto 2.5rem;line-height:1.7;position:relative}
+        .cta-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;position:relative}
+        .btn-cta-white{background:white;color:var(--navy);font-weight:700;font-size:0.9rem;padding:0.85rem 2rem;border-radius:50px;text-decoration:none;transition:all 0.3s;box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+        .btn-cta-white:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,0.25)}
+        .btn-cta-outline{border:1.5px solid rgba(255,255,255,0.35);color:white;font-weight:600;font-size:0.9rem;padding:0.85rem 2rem;border-radius:50px;text-decoration:none;transition:all 0.3s}
+        .btn-cta-outline:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.6);color:white}
+
+        /* FAB */
+        .fab-contact{position:fixed;bottom:2rem;right:2rem;width:52px;height:52px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:1.5rem;z-index:900;box-shadow:0 6px 20px rgba(37,211,102,0.4);transition:all 0.3s;text-decoration:none;animation:fabBounce 2s ease-in-out infinite}
+        @keyframes fabBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+        .fab-contact:hover{transform:scale(1.12);box-shadow:0 10px 28px rgba(37,211,102,0.5);color:white;animation:none}
+
+        /* FOOTER */
+        footer{background:var(--navy);color:rgba(255,255,255,0.7);padding:4rem 2rem 1.5rem}
+        .footer-inner{max-width:1200px;margin:0 auto}
+        .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+        .footer-brand p{font-size:0.88rem;line-height:1.7;color:rgba(255,255,255,0.5);margin-top:1rem}
+        .footer-logo .brand{color:white !important}
+        .footer-logo .sub{color:rgba(255,255,255,0.4) !important}
+        .footer-col h5{font-family:"Clash Display",sans-serif;font-size:0.85rem;font-weight:700;color:white;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.2rem}
+        .footer-col ul{list-style:none}
+        .footer-col ul li{margin-bottom:0.6rem}
+        .footer-col ul li a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.875rem;transition:color 0.3s}
+        .footer-col ul li a:hover{color:var(--cyan)}
+        .footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.08)}
+        .footer-bottom p{font-size:0.8rem;color:rgba(255,255,255,0.35)}
+        .footer-soc{display:flex;gap:0.65rem}
+        .fsoc{width:34px;height:34px;background:rgba(255,255,255,0.06);border-radius:8px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.5);font-size:0.8rem;text-decoration:none;transition:all 0.25s;border:1px solid rgba(255,255,255,0.08)}
+        .fsoc:hover{background:var(--royal);color:white;border-color:var(--royal);transform:translateY(-2px)}
+
+        /* REVEAL */
+        .reveal{opacity:0;transform:translateY(28px);transition:opacity 0.7s ease,transform 0.7s ease}
+        .reveal.visible{opacity:1;transform:translateY(0)}
+        .d1{transition-delay:0.05s}.d2{transition-delay:0.1s}.d3{transition-delay:0.15s}.d4{transition-delay:0.2s}
+
+        /* RESPONSIVE */
+        @media(max-width:900px){
+            .nav-menu{display:none}
+            .nav-cta{display:none}
+            .nav-hamburger{display:block}
+            .steps-grid{grid-template-columns:1fr 1fr;gap:1.5rem}
+            .steps-grid::before{display:none}
+            .footer-grid{grid-template-columns:1fr 1fr;gap:2rem}
+            .hero-stats-row{gap:2rem}
+        }
+        @media(max-width:600px){
+            .footer-grid{grid-template-columns:1fr}
+            .courses-header{flex-direction:column;align-items:flex-start}
+            .cta-btns{flex-direction:column;align-items:center}
+            .hero-stats-row{gap:1.5rem;flex-wrap:wrap}
+            .steps-grid{grid-template-columns:1fr}
+        }
+    </style>
+</head>
+<body>
+<div id="scroll-bar"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+<a href="https://wa.me/9779764464394" class="fab-contact" target="_blank" title="WhatsApp Us"><i class="fab fa-whatsapp"></i></a>
+
+<div id="loader">
+    <div class="loader-logo">NIRWANA</div>
+    <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+    <button class="mobile-close" onclick="document.getElementById('mobileNav').classList.remove('open')">&times;</button>
+    <a href="{% url 'home' %}" onclick="document.getElementById('mobileNav').classList.remove('open')">Home</a>
+    <a href="{% url 'about' %}" onclick="document.getElementById('mobileNav').classList.remove('open')">About Us</a>
+    <a href="{% url 'feature' %}" onclick="document.getElementById('mobileNav').classList.remove('open')">Services</a>
+    <a href="{% url 'training' %}" onclick="document.getElementById('mobileNav').classList.remove('open')">Training</a>
+    <a href="{% url 'careers' %}" onclick="document.getElementById('mobileNav').classList.remove('open')">Careers</a>
+    <a href="{% url 'contact' %}" onclick="document.getElementById('mobileNav').classList.remove('open')">Contact</a>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+    <div class="nav-inner">
+        <a href="{% url 'home' %}" class="nav-logo">
+            <div class="logo-mark">
+                <svg viewBox="0 0 22 22" fill="none"><path d="M11 2L19.5 7V15L11 20L2.5 15V7L11 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><circle cx="11" cy="11" r="3.5" fill="white"/></svg>
+            </div>
+            <div class="logo-txt"><div class="brand">NIRWANA</div><div class="sub">Infratech Engineering</div></div>
+        </a>
+        <ul class="nav-menu">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'about' %}">About Us</a></li>
+            <li><a href="{% url 'feature' %}">Services</a></li>
+            <li><a href="{% url 'training' %}" class="active">Training</a></li>
+            <li><a href="{% url 'careers' %}">Careers</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+        </ul>
+        <a href="https://wa.me/9779764464394" class="nav-cta"><i class="fab fa-whatsapp"></i> WhatsApp Us</a>
+        <button class="nav-hamburger" onclick="document.getElementById('mobileNav').classList.add('open')"><i class="fas fa-bars"></i></button>
+    </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     TRAINING HERO — Dark animated header
+═══════════════════════════════════════════ -->
+<section class="training-hero">
+    <div class="hero-grid-lines"></div>
+    <div class="hero-orb orb-1"></div>
+    <div class="hero-orb orb-2"></div>
+    <div class="hero-orb orb-3"></div>
+    <div class="hero-ring ring-1"></div>
+    <div class="hero-ring ring-2"></div>
+    <div class="hero-ring ring-3"></div>
+
+    <!-- Floating code snippets -->
+    <div class="code-tag ct-1">&lt;ReactNative /&gt;</div>
+    <div class="code-tag ct-2">import { useState }</div>
+    <div class="code-tag ct-3">async def train():</div>
+    <div class="code-tag ct-4">npm run build</div>
+    <div class="code-tag ct-5">git commit -m "🎓"</div>
+    <div class="code-tag ct-6">SELECT * FROM skills;</div>
+
+    <!-- Particles -->
+    <div class="particle p1"></div>
+    <div class="particle p2"></div>
+    <div class="particle p3"></div>
+    <div class="particle p4"></div>
+    <div class="particle p5"></div>
+
+    <div class="hero-content-wrap">
+        <div class="hero-badge"><span class="badge-glow"></span> Training Programs — Biratnagar, Nepal</div>
+        <h1 class="hero-title">
+            Learn. Build.<br>
+            <span class="grad-text">Get Hired.</span>
+        </h1>
+        <p class="hero-desc">Structured, mentor-led training in full-stack development, UI/UX design, Python & more — with real projects, code reviews, and verified certificates.</p>
+
+        <div class="hero-stats-row">
+            <div class="hstat"><div class="hstat-val"><span>3</span>+</div><div class="hstat-lbl">Programs</div></div>
+            <div class="hstat"><div class="hstat-val"><span>10</span></div><div class="hstat-lbl">Max per Batch</div></div>
+            <div class="hstat"><div class="hstat-val"><span>100</span>%</div><div class="hstat-lbl">Certificate</div></div>
+        </div>
+
+        <div class="hero-actions">
+            <a href="#courses" class="btn-hero-primary">View Programs <i class="fas fa-arrow-down"></i></a>
+            <a href="https://wa.me/9779764464394?text=Hi! I'd like to know more about your training programs." class="btn-hero-outline" target="_blank"><i class="fab fa-whatsapp"></i> Enquire Now</a>
+        </div>
+    </div>
+
+    <!-- Bottom wave -->
+    <div class="hero-wave">
+        <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+            <path d="M0 60V30C240 0 480 60 720 30C960 0 1200 60 1440 30V60H0Z" fill="#ffffff"/>
+        </svg>
+    </div>
+</section>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+    <div class="breadcrumb-inner">
+        <a href="{% url 'home' %}">Home</a>
+        <i class="fas fa-chevron-right" style="font-size:0.6rem;color:var(--text-light)"></i>
+        <span>Training</span>
+    </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+    <div class="section-inner">
+        <div class="how-header reveal">
+            <div class="section-label"><i class="fas fa-route"></i> The Journey</div>
+            <h2 class="section-title">How Our <span>Training Works</span></h2>
+            <p class="section-sub">A simple, structured path from enrollment to certification.</p>
+        </div>
+        <div class="steps-grid">
+            <div class="step-card reveal d1">
+                <div class="step-num">01</div>
+                <h3>Apply &amp; Enroll</h3>
+                <p>Fill the form or message us on WhatsApp. We'll confirm your seat and share onboarding details within 24 hours.</p>
+            </div>
+            <div class="step-card reveal d2">
+                <div class="step-num">02</div>
+                <h3>Learn with Mentors</h3>
+                <p>Attend structured live sessions, access recorded material, and ask questions directly to your assigned mentor.</p>
+            </div>
+            <div class="step-card reveal d3">
+                <div class="step-num">03</div>
+                <h3>Build Real Projects</h3>
+                <p>Apply skills to actual projects. Get code reviews, feedback, and iteration rounds just like a real development team.</p>
+            </div>
+            <div class="step-card reveal d4">
+                <div class="step-num">04</div>
+                <h3>Graduate &amp; Grow</h3>
+                <p>Receive your certificate and portfolio. Top graduates are referred directly for internships or jobs through our network.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WHAT'S INCLUDED -->
+<section class="section sec-bg">
+    <div class="section-inner">
+        <div class="reveal">
+            <div class="section-label"><i class="fas fa-box-open"></i> What's Inside</div>
+            <h2 class="section-title">What's <span>Included</span></h2>
+            <p class="section-sub">Every program comes loaded with everything you need to go from learner to job-ready professional.</p>
+        </div>
+        <div class="included-grid">
+            <div class="included-card reveal d1">
+                <div class="included-icon"><i class="fas fa-code-branch"></i></div>
+                <div><h4>Live Mentor Sessions</h4><p>Regular live classes with experienced mentors who guide you through every concept with hands-on examples.</p></div>
+            </div>
+            <div class="included-card reveal d2">
+                <div class="included-icon"><i class="fas fa-certificate"></i></div>
+                <div><h4>Verified Certificate</h4><p>Upon completion, receive a certificate from Nirwana Infratech Engineering to showcase to future employers.</p></div>
+            </div>
+            <div class="included-card reveal d3">
+                <div class="included-icon"><i class="fas fa-folder-open"></i></div>
+                <div><h4>Portfolio Projects</h4><p>Build 2–3 real-world projects during the program that you can showcase in job interviews and on GitHub.</p></div>
+            </div>
+            <div class="included-card reveal d4">
+                <div class="included-icon"><i class="fas fa-comments"></i></div>
+                <div><h4>Code Reviews</h4><p>Professional code reviews on every project you submit — the same process used in real software companies.</p></div>
+            </div>
+            <div class="included-card reveal d1">
+                <div class="included-icon"><i class="fas fa-users"></i></div>
+                <div><h4>Small Batch Size</h4><p>Maximum 10 students per batch ensures every student gets personal attention and direct mentor feedback.</p></div>
+            </div>
+            <div class="included-card reveal d2">
+                <div class="included-icon"><i class="fas fa-briefcase"></i></div>
+                <div><h4>Career Support</h4><p>Top graduates are referred directly to companies in our network for internships and junior developer roles.</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- COURSES -->
+<section class="section courses-section" id="courses">
+    <div class="section-inner">
+        <div class="courses-header reveal">
+            <div>
+                <div class="section-label"><i class="fas fa-graduation-cap"></i> Programs</div>
+                <h2 class="section-title">Our <span>Training Programs</span></h2>
+                <p class="section-sub">All programs are project-based, mentor-led, and designed to get you hired.</p>
+            </div>
+        </div>
+        <div class="courses-grid">
+
+            <!-- FEATURED: Full Stack Mobile & Web -->
+            <div class="course-card featured-course reveal">
+                <div class="course-header">
+                    <div class="course-badge">⭐ Flagship Program</div>
+                    <div class="course-title">Full-Stack Mobile &amp; Web Development</div>
+                    <div class="course-subtitle">React Native · Next.js · Node.js · PostgreSQL</div>
+                </div>
+                <div class="course-meta">
+                    <span class="meta-tag"><i class="fas fa-clock"></i> 16 Weeks</span>
+                    <span class="meta-tag"><i class="fas fa-users"></i> Max 10 per Batch</span>
+                    <span class="meta-tag"><i class="fas fa-laptop"></i> Offline / Online</span>
+                    <span class="meta-tag"><i class="fas fa-certificate"></i> Certificate Provided</span>
+                    <span class="meta-tag"><i class="fas fa-briefcase"></i> Career Support</span>
+                </div>
+                <div class="course-body">
+                    <p>Our most comprehensive program. Build a production-ready mobile app and full web application from scratch — covering both frontend and backend, with real deployment. Ideal for students and career-changers who want to become professional developers.</p>
+                    <div class="featured-tech-grid">
+                        <div class="tech-block">
+                            <h5><i class="fas fa-mobile-alt" style="margin-right:5px;color:var(--cyan)"></i> Mobile (React Native)</h5>
+                            <ul>
+                                <li>React Native + Expo</li>
+                                <li>Navigation &amp; deep links</li>
+                                <li>Camera, maps, notifications</li>
+                                <li>App Store / Play Store publish</li>
+                            </ul>
+                        </div>
+                        <div class="tech-block">
+                            <h5><i class="fas fa-globe" style="margin-right:5px;color:var(--cyan)"></i> Web (Next.js)</h5>
+                            <ul>
+                                <li>Next.js 15 App Router</li>
+                                <li>SSR, SSG, ISR strategies</li>
+                                <li>Tailwind CSS &amp; shadcn/ui</li>
+                                <li>SEO &amp; Core Web Vitals</li>
+                            </ul>
+                        </div>
+                        <div class="tech-block">
+                            <h5><i class="fas fa-server" style="margin-right:5px;color:var(--cyan)"></i> Backend (Node.js)</h5>
+                            <ul>
+                                <li>Express.js REST APIs</li>
+                                <li>PostgreSQL + Prisma ORM</li>
+                                <li>JWT Auth &amp; refresh tokens</li>
+                                <li>Cloud storage &amp; deploy</li>
+                            </ul>
+                        </div>
+                        <div class="tech-block">
+                            <h5><i class="fas fa-tools" style="margin-right:5px;color:var(--cyan)"></i> Dev Tools &amp; Workflow</h5>
+                            <ul>
+                                <li>Git &amp; GitHub / branching</li>
+                                <li>TypeScript fundamentals</li>
+                                <li>Postman &amp; API testing</li>
+                                <li>Agile sprint workflow</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="course-tags">
+                        <span class="skill-tag">React Native</span>
+                        <span class="skill-tag">Next.js 15</span>
+                        <span class="skill-tag">Node.js</span>
+                        <span class="skill-tag">TypeScript</span>
+                        <span class="skill-tag">PostgreSQL</span>
+                        <span class="skill-tag">Prisma</span>
+                        <span class="skill-tag">Expo</span>
+                        <span class="skill-tag">Tailwind CSS</span>
+                        <span class="skill-tag">REST API</span>
+                        <span class="skill-tag">JWT Auth</span>
+                        <span class="skill-tag">Hostinger</span>
+                        <span class="skill-tag">Git</span>
+                    </div>
+                </div>
+                <div class="course-footer">
+                    <div class="course-price">Enrollment Fee <span>— Contact Us</span></div>
+                    <a href="https://wa.me/9779764464394?text=I'm interested in the Full-Stack Mobile & Web Development training program." class="btn-enroll" target="_blank">Enroll Now</a>
+                </div>
+            </div>
+
+            <!-- UI/UX DESIGN -->
+            <div class="course-card reveal d1">
+                <div class="course-header">
+                    <div class="course-badge">Design Track</div>
+                    <div class="course-title">UI/UX Design Fundamentals</div>
+                    <div class="course-subtitle">Figma, Research &amp; Prototyping</div>
+                </div>
+                <div class="course-meta">
+                    <span class="meta-tag"><i class="fas fa-clock"></i> 6 Weeks</span>
+                    <span class="meta-tag"><i class="fas fa-users"></i> Max 10 per Batch</span>
+                    <span class="meta-tag"><i class="fas fa-laptop"></i> Offline / Online</span>
+                    <span class="meta-tag"><i class="fas fa-certificate"></i> Certificate Provided</span>
+                </div>
+                <div class="course-body">
+                    <p>Design beautiful, user-centered digital products in Figma. You'll cover UX research, wireframing, component design, prototyping, and developer handoff — leaving with a complete case study portfolio.</p>
+                    <div class="course-tags">
+                        <span class="skill-tag">Figma</span>
+                        <span class="skill-tag">Wireframing</span>
+                        <span class="skill-tag">Prototyping</span>
+                        <span class="skill-tag">User Research</span>
+                        <span class="skill-tag">Design Systems</span>
+                        <span class="skill-tag">Portfolio Building</span>
+                    </div>
+                </div>
+                <div class="course-footer">
+                    <div class="course-price">Enrollment Fee <span>— Contact Us</span></div>
+                    <a href="https://wa.me/9779764464394?text=I'm interested in the UI/UX Design training program." class="btn-enroll" target="_blank">Enroll Now</a>
+                </div>
+            </div>
+
+            <!-- PYTHON -->
+            <div class="course-card reveal d2">
+                <div class="course-header">
+                    <div class="course-badge">Dev Track</div>
+                    <div class="course-title">Python Programming &amp; Automation</div>
+                    <div class="course-subtitle">From Basics to Real Projects</div>
+                </div>
+                <div class="course-meta">
+                    <span class="meta-tag"><i class="fas fa-clock"></i> 8 Weeks</span>
+                    <span class="meta-tag"><i class="fas fa-users"></i> Max 10 per Batch</span>
+                    <span class="meta-tag"><i class="fas fa-laptop"></i> Offline / Online</span>
+                    <span class="meta-tag"><i class="fas fa-certificate"></i> Certificate Provided</span>
+                </div>
+                <div class="course-body">
+                    <p>Go from zero to building real automation scripts, web scrapers, APIs, and data dashboards with Python. This course takes a project-first approach so you're writing useful code from week one.</p>
+                    <div class="course-tags">
+                        <span class="skill-tag">Python 3</span>
+                        <span class="skill-tag">OOP</span>
+                        <span class="skill-tag">Web Scraping</span>
+                        <span class="skill-tag">Flask / FastAPI</span>
+                        <span class="skill-tag">Pandas</span>
+                        <span class="skill-tag">Automation</span>
+                        <span class="skill-tag">REST APIs</span>
+                        <span class="skill-tag">SQLite / PostgreSQL</span>
+                    </div>
+                </div>
+                <div class="course-footer">
+                    <div class="course-price">Enrollment Fee <span>— Contact Us</span></div>
+                    <a href="https://wa.me/9779764464394?text=I'm interested in the Python Programming & Automation training program." class="btn-enroll" target="_blank">Enroll Now</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <h2>Ready to Start Your <span>Tech Journey?</span></h2>
+    <p>Message us on WhatsApp and we'll help you pick the right program. New batches start every month.</p>
+    <div class="cta-btns">
+        <a href="https://wa.me/9779764464394?text=Hi! I'd like to know more about your training programs." class="btn-cta-white" target="_blank"><i class="fab fa-whatsapp" style="margin-right:8px;color:#25D366"></i>Chat on WhatsApp</a>
+        <a href="{% url 'contact' %}" class="btn-cta-outline">Send an Enquiry</a>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="{% url 'home' %}" class="nav-logo footer-logo">
+                    <div class="logo-mark"><svg viewBox="0 0 22 22" fill="none"><path d="M11 2L19.5 7V15L11 20L2.5 15V7L11 2Z" stroke="white" stroke-width="1.5"/><circle cx="11" cy="11" r="3.5" fill="white"/></svg></div>
+                    <div class="logo-txt"><div class="brand">NIRWANA</div><div class="sub">Infratech Engineering</div></div>
+                </a>
+                <p>Building digital solutions that empower businesses across Nepal. Your trusted technology partner from Biratnagar.</p>
+            </div>
+            <div class="footer-col">
+                <h5>Services</h5>
+                <ul>
+                    <li><a href="{% url 'feature' %}">Software Solutions</a></li>
+                    <li><a href="{% url 'feature' %}">Web Development</a></li>
+                    <li><a href="{% url 'feature' %}">Mobile Apps</a></li>
+                    <li><a href="{% url 'feature' %}">Digital Marketing</a></li>
+                    <li><a href="{% url 'feature' %}">Custom ERP</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Company</h5>
+                <ul>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                    <li><a href="{% url 'feature' %}">Our Services</a></li>
+                    <li><a href="{% url 'training' %}">Training</a></li>
+                    <li><a href="{% url 'careers' %}">Careers</a></li>
+                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Contact</h5>
+                <ul>
+                    <li><a href="tel:+9779817757282">+977 9817-757282</a></li>
+                    <li><a href="https://wa.me/9779764464394">WhatsApp Us</a></li>
+                    <li><a href="mailto:infratechnirwana@gmail.com">infratechnirwana@gmail.com</a></li>
+                    <li><a>Bhanu Tole, Biratnagar-09</a></li>
+                </ul>
+            </div>
+        </div>
+        <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(0,194,255,0.4),rgba(37,99,235,0.4),transparent);margin-bottom:1.5rem"></div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Nirwana Infratech Engineering Pvt. Ltd. All rights reserved.</p>
+            <div class="footer-soc">
+                <a href="#" class="fsoc"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="fsoc"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="fsoc"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" class="fsoc"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const l = document.getElementById('loader');
+            if (l) { l.style.opacity='0'; l.style.transition='opacity 0.5s'; setTimeout(()=>l.style.display='none',500); }
+        }, 1800);
+    });
+    window.addEventListener('scroll', () => {
+        const p = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+        document.getElementById('scroll-bar').style.width = p + '%';
+        document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 80);
+    });
+    document.addEventListener('mousemove', e => {
+        const c = document.getElementById('cursorGlow');
+        if (c) { c.style.left = e.clientX + 'px'; c.style.top = e.clientY + 'px'; }
+    });
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach((e, i) => { if (e.isIntersecting) { setTimeout(()=>e.target.classList.add('visible'), i*60); obs.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

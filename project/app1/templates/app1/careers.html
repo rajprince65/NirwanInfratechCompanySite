@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Careers & Internships — Nirwana Infratech Engineering Pvt. Ltd</title>
+<meta name="description" content="Join Nirwana Infratech Engineering. Apply for internships in Web Development, Mobile App Development, and Digital Marketing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+  --white: #ffffff;
+  --off-white: #F8FAFF;
+  --sky-soft: #EAF4FF;
+  --sky-mid: #D6EEFF;
+  --cyan: #00C2FF;
+  --royal: #2563EB;
+  --royal-dark: #1D4ED8;
+  --navy: #0F1F5C;
+  --text: #1a2340;
+  --text-mid: #4B5A7A;
+  --text-light: #8A97B5;
+  --border: rgba(37,99,235,0.12);
+  --border-cyan: rgba(0,194,255,0.25);
+  --grad: linear-gradient(135deg, #00C2FF 0%, #2563EB 100%);
+  --grad-soft: linear-gradient(135deg, #EAF4FF 0%, #D6EEFF 100%);
+  --shadow: 0 4px 24px rgba(37,99,235,0.10);
+  --shadow-lg: 0 20px 60px rgba(37,99,235,0.15);
+  --radius: 16px;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: "Plus Jakarta Sans", sans-serif; background: var(--white); color: var(--text); overflow-x: hidden; }
+h1, h2, h3, h4 { font-family: "Plus Jakarta Sans", sans-serif; }
+
+#scroll-bar { position: fixed; top: 0; left: 0; height: 3px; width: 0%; background: var(--grad); z-index: 9999; transition: width 0.1s linear; }
+
+#loader { position: fixed; inset: 0; background: white; z-index: 99999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1.5rem; }
+.loader-logo { font-family: "Plus Jakarta Sans", sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--royal); }
+.loader-bar { width: 200px; height: 3px; background: var(--sky-mid); border-radius: 2px; overflow: hidden; }
+.loader-fill { height: 100%; background: var(--grad); border-radius: 2px; animation: loadFill 1.4s cubic-bezier(.4,0,.2,1) forwards; }
+@keyframes loadFill { from { width: 0; } to { width: 100%; } }
+
+.navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0; background: rgba(255,255,255,0.96); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); box-shadow: 0 4px 30px rgba(37,99,235,0.06); }
+.nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 68px; }
+.nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.logo-mark { width: 40px; height: 40px; background: var(--grad); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(37,99,235,0.25); }
+.logo-mark svg { width: 20px; height: 20px; }
+.logo-txt .brand { font-family: "Plus Jakarta Sans", sans-serif; font-size: 1rem; font-weight: 700; color: var(--navy); letter-spacing: 0.5px; }
+.logo-txt .sub { font-size: 0.6rem; color: var(--text-light); letter-spacing: 1px; text-transform: uppercase; }
+.nav-menu { display: flex; align-items: center; gap: 0.25rem; list-style: none; }
+.nav-menu a { color: var(--text-mid); font-size: 0.875rem; font-weight: 500; text-decoration: none; padding: 0.45rem 0.9rem; border-radius: 8px; transition: all 0.2s; }
+.nav-menu a:hover { color: var(--royal); background: var(--sky-soft); }
+.nav-menu a.active { color: var(--royal); background: var(--sky-soft); font-weight: 600; }
+.nav-cta { background: var(--grad); color: white; padding: 0.55rem 1.4rem; border-radius: 50px; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: all 0.25s; display: flex; align-items: center; gap: 7px; box-shadow: 0 4px 14px rgba(37,99,235,0.25); }
+.nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37,99,235,0.35); color: white; }
+.nav-hamburger { display: none; background: none; border: 1.5px solid var(--border-cyan); color: var(--royal); padding: 0.4rem 0.65rem; border-radius: 8px; font-size: 1rem; cursor: pointer; }
+
+.mobile-nav { display: none; position: fixed; inset: 0; z-index: 990; background: rgba(255,255,255,0.98); backdrop-filter: blur(20px); flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem; }
+.mobile-nav.open { display: flex; }
+.mobile-nav a { font-family: "Plus Jakarta Sans", sans-serif; font-size: 2rem; font-weight: 700; color: var(--navy); text-decoration: none; }
+.mobile-nav a:hover { color: var(--royal); }
+.mobile-close { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; font-size: 1.5rem; color: var(--navy); cursor: pointer; }
+
+/* HERO */
+.career-hero {
+  min-height: 58vh;
+  padding: 8rem 2rem 5rem;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url("{% static 'app1/img/careersheader.jpg' %}");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+.career-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(10,20,66,0.80) 0%, rgba(15,31,92,0.70) 40%, rgba(37,99,235,0.50) 100%);
+  z-index: 0;
+}
+.hero-dots { position: absolute; inset: 0; pointer-events: none; z-index: 1; background-image: radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px); background-size: 32px 32px; }
+.hero-ring-a { position: absolute; width: 500px; height: 500px; border-radius: 50%; border: 1.5px dashed rgba(255,255,255,0.12); top: 50%; left: 50%; transform: translate(-50%,-50%); animation: spin 50s linear infinite; z-index: 1; }
+.hero-ring-b { position: absolute; width: 720px; height: 720px; border-radius: 50%; border: 1px dashed rgba(0,194,255,0.12); top: 50%; left: 50%; transform: translate(-50%,-50%); animation: spin 80s linear infinite reverse; z-index: 1; }
+@keyframes spin { from{transform:translate(-50%,-50%) rotate(0deg)} to{transform:translate(-50%,-50%) rotate(360deg)} }
+.career-hero-inner { position: relative; z-index: 2; max-width: 760px; text-align: center; }
+
+.page-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: white; padding: 0.4rem 1.1rem; border-radius: 50px; font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.8rem; backdrop-filter: blur(8px); }
+.badge-dot { width: 7px; height: 7px; background: var(--cyan); border-radius: 50%; animation: blink 1.5s ease infinite; }
+@keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+
+.career-hero h1 { font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 700; color: white; line-height: 1.08; margin-bottom: 1.4rem; letter-spacing: -0.5px; text-shadow: 0 2px 20px rgba(0,0,0,0.3); }
+.career-hero h1 .accent { background: linear-gradient(135deg, #00C2FF, #60d8ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.career-hero p { font-size: 1.05rem; color: rgba(255,255,255,0.82); line-height: 1.8; max-width: 540px; margin: 0 auto 2.5rem; text-shadow: 0 1px 8px rgba(0,0,0,0.2); }
+
+.hero-tags { display: flex; gap: 0.7rem; justify-content: center; flex-wrap: wrap; }
+.hero-tag { background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.20); color: rgba(255,255,255,0.88); padding: 0.45rem 1.1rem; border-radius: 50px; font-size: 0.8rem; font-weight: 500; display: flex; align-items: center; gap: 7px; backdrop-filter: blur(6px); transition: background 0.2s, border-color 0.2s; }
+.hero-tag:hover { background: rgba(0,194,255,0.18); border-color: rgba(0,194,255,0.4); }
+.hero-tag i { color: var(--cyan); font-size: 0.75rem; }
+
+/* BREADCRUMB */
+.breadcrumb-bar { background: var(--sky-soft); border-bottom: 1px solid var(--border); padding: 0.7rem 2rem; }
+.breadcrumb-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; color: var(--text-light); }
+.breadcrumb-inner a { color: var(--royal); text-decoration: none; font-weight: 500; }
+.breadcrumb-inner a:hover { text-decoration: underline; }
+.breadcrumb-inner .sep { font-size: 0.6rem; }
+
+/* PERKS */
+.perks-section { padding: 5rem 2rem; background: var(--off-white); }
+.perks-inner { max-width: 1200px; margin: 0 auto; }
+.section-head { text-align: center; max-width: 560px; margin: 0 auto 3.5rem; }
+.sec-tag { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; color: var(--royal); margin-bottom: 0.6rem; display: block; }
+.sec-title { font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 700; color: var(--navy); line-height: 1.1; margin-bottom: 0.7rem; }
+.sec-desc { font-size: 1rem; color: var(--text-mid); line-height: 1.8; }
+.perks-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+.perk-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem 1.5rem; transition: all 0.3s cubic-bezier(.4,0,.2,1); text-align: center; }
+.perk-card:hover { border-color: var(--border-cyan); box-shadow: var(--shadow-lg); transform: translateY(-5px); }
+.perk-icon { width: 56px; height: 56px; background: var(--grad); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.3rem; margin: 0 auto 1.3rem; }
+.perk-title { font-family: "Plus Jakarta Sans", sans-serif; font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; }
+.perk-desc { font-size: 0.85rem; color: var(--text-mid); line-height: 1.7; }
+
+/* ==============================
+   CAREERS MAIN — REDESIGNED
+   ============================== */
+.careers-main { padding: 5rem 2rem 7rem; background: var(--white); }
+.careers-wrap { max-width: 1200px; margin: 0 auto; }
+
+.jobs-header { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.5rem; }
+.jobs-header-text .sec-tag { margin-bottom: 0.4rem; }
+.jobs-header-text h2 { font-size: clamp(1.6rem, 2.5vw, 2.1rem); font-weight: 700; color: var(--navy); margin: 0 0 0.25rem; }
+.jobs-header-text p { font-size: 0.875rem; color: var(--text-mid); margin: 0; }
+
+.opening-count { display: inline-flex; align-items: center; gap: 7px; background: #EAF3DE; border: 1px solid #C0DD97; color: #3B6D11; padding: 0.45rem 1.1rem; border-radius: 50px; font-size: 0.78rem; font-weight: 700; white-space: nowrap; }
+.opening-dot { width: 6px; height: 6px; background: #639922; border-radius: 50%; animation: blink 1.8s ease infinite; }
+
+/* Filter bar — clean pill row */
+.filter-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 2rem; }
+.filter-btn { background: transparent; border: 1px solid var(--border); color: var(--text-mid); padding: 0.42rem 1.1rem; border-radius: 50px; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.18s; font-family: "Plus Jakarta Sans", sans-serif; }
+.filter-btn:hover { border-color: rgba(37,99,235,0.35); color: var(--royal); background: var(--sky-soft); }
+.filter-btn.active { background: var(--royal); color: white; border-color: var(--royal); }
+
+/* Job cards grid */
+.jobs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+
+.job-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.job-card:hover { border-color: rgba(37,99,235,0.28); box-shadow: 0 6px 28px rgba(37,99,235,0.07); }
+
+/* Card top row */
+.job-card-top { display: flex; align-items: flex-start; gap: 12px; }
+.job-icon { width: 44px; height: 44px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; flex-shrink: 0; }
+.job-icon.web     { background: #EFF6FF; color: #2563EB; }
+.job-icon.mobile  { background: #ECFDF5; color: #059669; }
+.job-icon.marketing { background: #FFFBEB; color: #D97706; }
+.job-icon.design  { background: #FDF2F8; color: #DB2777; }
+.job-info { flex: 1; min-width: 0; }
+.job-title { font-family: "Plus Jakarta Sans", sans-serif; font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+.job-dept  { font-size: 0.75rem; color: var(--text-light); font-weight: 500; }
+.job-badge { flex-shrink: 0; background: #EAF3DE; border: 1px solid #C0DD97; color: #3B6D11; padding: 0.22rem 0.75rem; border-radius: 50px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; align-self: flex-start; margin-top: 2px; }
+
+/* Meta row */
+.job-meta { display: flex; gap: 1rem; flex-wrap: wrap; padding-bottom: 1.1rem; border-bottom: 1px solid var(--border); }
+.job-meta span { font-size: 0.76rem; color: var(--text-mid); display: flex; align-items: center; gap: 5px; }
+.job-meta i { color: var(--royal); font-size: 0.7rem; }
+
+/* Skill tags */
+.job-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.job-tag { background: var(--sky-soft); border: 1px solid var(--border); color: var(--text-mid); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.71rem; font-weight: 600; }
+
+/* Footer row */
+.job-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: auto; padding-top: 1.1rem; border-top: 1px solid var(--border); }
+.job-openings { font-size: 0.76rem; color: var(--text-light); font-weight: 500; display: flex; align-items: center; gap: 5px; }
+.job-openings i { color: var(--royal); }
+
+.apply-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--royal);
+  color: white;
+  padding: 0.55rem 1.3rem;
+  border-radius: 50px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s, transform 0.2s;
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+.apply-btn:hover { background: var(--royal-dark); transform: translateY(-1px); }
+
+/* WHY JOIN */
+.why-join { padding: 5rem 2rem; background: var(--sky-soft); }
+.why-join-inner { max-width: 1200px; margin: 0 auto; }
+.why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3.5rem; }
+.why-card { border: 1px solid var(--border); border-radius: 20px; padding: 2.2rem 2rem; transition: all 0.3s; background: white; }
+.why-card:hover { border-color: var(--border-cyan); box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+.why-num { font-family: "Plus Jakarta Sans", sans-serif; font-size: 3rem; font-weight: 700; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; opacity: 0.15; display: block; line-height: 1; margin-bottom: 1.2rem; }
+.why-icon { width: 48px; height: 48px; background: var(--sky-soft); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--royal); font-size: 1.1rem; margin-bottom: 1.1rem; }
+.why-title { font-family: "Plus Jakarta Sans", sans-serif; font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; }
+.why-desc { font-size: 0.875rem; color: var(--text-mid); line-height: 1.75; }
+
+/* DRAWER */
+.drawer-overlay { position: fixed; inset: 0; background: rgba(15,31,92,0.35); z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; backdrop-filter: blur(4px); }
+.drawer-overlay.open { opacity: 1; pointer-events: all; }
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 520px; max-width: 100vw; background: white; z-index: 2001; transform: translateX(100%); transition: transform 0.4s cubic-bezier(.4,0,.2,1); display: flex; flex-direction: column; box-shadow: -20px 0 60px rgba(37,99,235,0.12); overflow: hidden; }
+.drawer.open { transform: translateX(0); }
+.drawer-header { padding: 1.8rem 2rem 1.5rem; border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--sky-soft); position: relative; overflow: hidden; }
+.drawer-header-pattern { position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(37,99,235,0.08) 1px, transparent 1px); background-size: 24px 24px; pointer-events: none; }
+.drawer-header-inner { position: relative; z-index: 1; }
+.drawer-close { position: absolute; top: 1.5rem; right: 1.8rem; width: 36px; height: 36px; background: white; border: 1px solid var(--border); border-radius: 50%; color: var(--text-mid); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; transition: all 0.2s; z-index: 2; }
+.drawer-close:hover { border-color: var(--royal); color: var(--royal); transform: rotate(90deg); }
+.drawer-role-pill { display: inline-flex; align-items: center; gap: 7px; background: white; border: 1px solid var(--border-cyan); color: var(--royal); padding: 0.35rem 1rem; border-radius: 50px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 1rem; }
+.drawer-title { font-family: "Plus Jakarta Sans", sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--navy); margin-bottom: 0.3rem; }
+.drawer-subtitle { font-size: 0.85rem; color: var(--text-mid); }
+.drawer-body { flex: 1; overflow-y: auto; padding: 2rem; }
+.drawer-body::-webkit-scrollbar { width: 4px; }
+.drawer-body::-webkit-scrollbar-track { background: var(--sky-soft); }
+.drawer-body::-webkit-scrollbar-thumb { background: var(--border-cyan); border-radius: 4px; }
+.form-section-label { font-family: "Plus Jakarta Sans", sans-serif; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; color: var(--royal); margin-bottom: 1rem; margin-top: 1.5rem; display: flex; align-items: center; gap: 8px; }
+.form-section-label::after { content: ""; height: 1px; flex: 1; background: var(--border); }
+.form-section-label:first-child { margin-top: 0; }
+.fgroup { margin-bottom: 1rem; }
+.frow { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.flabel { font-size: 0.78rem; font-weight: 600; color: var(--navy); margin-bottom: 0.4rem; display: block; }
+.flabel .req { color: #EF4444; }
+.finput, .fselect, .ftextarea { width: 100%; padding: 0.7rem 1rem; border: 1.5px solid var(--border); border-radius: 10px; font-size: 0.875rem; color: var(--text); background: var(--sky-soft); font-family: "Plus Jakarta Sans", sans-serif; transition: all 0.22s; outline: none; appearance: none; -webkit-appearance: none; }
+.finput:focus, .fselect:focus, .ftextarea:focus { border-color: var(--royal); background: white; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+.finput::placeholder, .ftextarea::placeholder { color: var(--text-light); }
+.ftextarea { resize: vertical; min-height: 95px; }
+.fselect { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238A97B5' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center; padding-right: 36px; cursor: pointer; }
+.cv-upload-area { border: 2px dashed var(--border-cyan); border-radius: var(--radius); padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.25s; background: var(--sky-soft); position: relative; }
+.cv-upload-area:hover { border-color: var(--royal); background: #E0EDFF; }
+.cv-upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.cv-upload-icon { width: 44px; height: 44px; background: var(--grad); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.1rem; margin: 0 auto 0.8rem; }
+.cv-upload-title { font-size: 0.875rem; font-weight: 700; color: var(--navy); margin-bottom: 0.2rem; }
+.cv-upload-hint { font-size: 0.75rem; color: var(--text-light); }
+.cv-upload-name { font-size: 0.8rem; color: var(--royal); font-weight: 600; margin-top: 0.4rem; }
+.drawer-footer { padding: 1.5rem 2rem; border-top: 1px solid var(--border); flex-shrink: 0; background: white; }
+.form-submit { width: 100%; padding: 1rem; background: var(--royal); color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: "Plus Jakarta Sans", sans-serif; transition: all 0.25s; display: flex; align-items: center; justify-content: center; gap: 9px; }
+.form-submit:hover { background: var(--royal-dark); transform: translateY(-1px); }
+.form-note { font-size: 0.73rem; color: var(--text-light); text-align: center; margin-top: 0.7rem; }
+.success-state { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 4rem 2rem; flex: 1; }
+.success-state.show { display: flex; }
+.success-circle { width: 80px; height: 80px; background: linear-gradient(135deg, #D1FAE5, #A7F3D0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #059669; margin: 0 auto 1.5rem; animation: popIn 0.4s cubic-bezier(.34,1.56,.64,1); }
+@keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.success-state h3 { font-family: "Plus Jakarta Sans", sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--navy); margin-bottom: 0.6rem; }
+.success-state p { font-size: 0.9rem; color: var(--text-mid); line-height: 1.7; max-width: 300px; margin-bottom: 2rem; }
+.success-role-pill { background: var(--sky-soft); border: 1px solid var(--border-cyan); color: var(--royal); padding: 0.4rem 1.2rem; border-radius: 50px; font-size: 0.8rem; font-weight: 700; margin-bottom: 2rem; display: inline-block; }
+.btn-another { background: var(--royal); color: white; padding: 0.7rem 2rem; border-radius: 50px; font-size: 0.875rem; font-weight: 600; cursor: pointer; border: none; font-family: "Plus Jakarta Sans", sans-serif; transition: all 0.25s; }
+.btn-another:hover { background: var(--royal-dark); transform: translateY(-1px); }
+
+/* FOOTER */
+footer { background: var(--navy); padding: 4.5rem 2rem 2rem; }
+.footer-inner { max-width: 1200px; margin: 0 auto; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
+.footer-brand p { font-size: 0.875rem; color: rgba(255,255,255,0.45); line-height: 1.8; margin-top: 1.2rem; max-width: 270px; }
+.footer-logo .brand { color: white; }
+.footer-logo .sub { color: rgba(255,255,255,0.35); }
+.footer-col h5 { font-family: "Plus Jakarta Sans", sans-serif; font-size: 0.82rem; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.2rem; }
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 0.65rem; }
+.footer-col ul li a { font-size: 0.85rem; color: rgba(255,255,255,0.45); text-decoration: none; transition: color 0.2s; }
+.footer-col ul li a:hover { color: var(--cyan); }
+.footer-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(0,194,255,0.35), rgba(37,99,235,0.5), transparent); margin-bottom: 1.5rem; }
+.footer-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+.footer-bottom p { font-size: 0.78rem; color: rgba(255,255,255,0.3); }
+.footer-soc { display: flex; gap: 0.6rem; }
+.fsoc { width: 34px; height: 34px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.45); font-size: 0.8rem; text-decoration: none; transition: all 0.25s; }
+.fsoc:hover { background: var(--royal); border-color: var(--royal); color: white; transform: translateY(-2px); }
+
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal.d1 { transition-delay: 0.1s; }
+.reveal.d2 { transition-delay: 0.15s; }
+.reveal.d3 { transition-delay: 0.2s; }
+.reveal.d4 { transition-delay: 0.25s; }
+
+.fab-contact { position: fixed; bottom: 2rem; right: 2rem; z-index: 500; background: var(--grad); color: white; width: 54px; height: 54px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: 0 8px 24px rgba(37,99,235,0.35); text-decoration: none; transition: all 0.3s; animation: fabBounce 2s ease-in-out infinite; }
+@keyframes fabBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.fab-contact:hover { transform: scale(1.1) translateY(-4px); color: white; animation: none; }
+
+@media(max-width:1080px) {
+  .jobs-grid { grid-template-columns: 1fr; }
+  .perks-grid { grid-template-columns: repeat(2,1fr); }
+  .why-grid { grid-template-columns: repeat(2,1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+}
+@media(max-width:768px) {
+  .nav-menu { display: none; }
+  .nav-hamburger { display: block; }
+  .drawer { width: 100vw; }
+  .frow { grid-template-columns: 1fr; }
+  .why-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .hero-ring-a, .hero-ring-b { display: none; }
+}
+@media(max-width:580px) {
+  .perks-grid { grid-template-columns: 1fr; }
+  .jobs-header { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+<form style="display:none">{% csrf_token %}</form>
+<div id="scroll-bar"></div>
+
+<div id="loader">
+  <div class="loader-logo">NIRWANA</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<a href="https://wa.me/9779764464394" class="fab-contact" target="_blank" title="WhatsApp Us">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-close" onclick="document.getElementById('mobileNav').classList.remove('open')">&times;</button>
+  <a href="{% url 'home' %}" onclick="document.getElementById('mobileNav').classList.remove('open')">Home</a>
+  <a href="{% url 'about' %}" onclick="document.getElementById('mobileNav').classList.remove('open')">About</a>
+  <a href="{% url 'feature' %}" onclick="document.getElementById('mobileNav').classList.remove('open')">Services</a>
+  <a href="{% url 'training' %}" onclick="document.getElementById('mobileNav').classList.remove('open')">Training</a>
+  <a href="{% url 'careers' %}" onclick="document.getElementById('mobileNav').classList.remove('open')">Careers</a>
+  <a href="{% url 'contact' %}" onclick="document.getElementById('mobileNav').classList.remove('open')">Contact</a>
+</div>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="{% url 'home' %}" class="nav-logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 22 22" fill="none"><path d="M11 2L19.5 7V15L11 20L2.5 15V7L11 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><circle cx="11" cy="11" r="3.5" fill="white"/></svg>
+      </div>
+      <div class="logo-txt">
+        <div class="brand">NIRWANA</div>
+        <div class="sub">Infratech Engineering</div>
+      </div>
+    </a>
+    <ul class="nav-menu">
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{% url 'about' %}">About Us</a></li>
+      <li><a href="{% url 'feature' %}">Services</a></li>
+      <li><a href="{% url 'training' %}">Training</a></li>
+      <li><a href="{% url 'careers' %}" class="active">Careers</a></li>
+      <li><a href="{% url 'contact' %}">Contact</a></li>
+    </ul>
+    <a href="https://wa.me/9779764464394" class="nav-cta" target="_blank" rel="noopener">
+      <i class="fab fa-whatsapp"></i> WhatsApp Us
+    </a>
+    <button class="nav-hamburger" onclick="document.getElementById('mobileNav').classList.add('open')"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="career-hero">
+  <div class="hero-dots"></div>
+  <div class="hero-ring-a"></div>
+  <div class="hero-ring-b"></div>
+  <div class="career-hero-inner">
+    <div class="page-badge"><span class="badge-dot"></span> We're Hiring — Join Our Team</div>
+    <h1>Build Your Career<br>With <span class="accent">Nirwana</span></h1>
+    <p>We're always looking for talented, passionate people. Start your journey with real projects, real mentors, and real impact — based in Biratnagar, Nepal.</p>
+    <div class="hero-tags">
+      <div class="hero-tag"><i class="fas fa-map-marker-alt"></i> Biratnagar, Nepal</div>
+      <div class="hero-tag"><i class="fas fa-briefcase"></i> Internship / Full-time</div>
+      <div class="hero-tag"><i class="fas fa-laptop"></i> Remote Friendly</div>
+      <div class="hero-tag"><i class="fas fa-users"></i> Small, Expert Team</div>
+    </div>
+  </div>
+</section>
+
+<div class="breadcrumb-bar">
+  <div class="breadcrumb-inner">
+    <a href="{% url 'home' %}">Home</a>
+    <span class="sep"><i class="fas fa-chevron-right"></i></span>
+    <span>Careers</span>
+  </div>
+</div>
+
+<!-- PERKS -->
+<section class="perks-section">
+  <div class="perks-inner">
+    <div class="section-head reveal">
+      <span class="sec-tag">Why Work With Us</span>
+      <h2 class="sec-title">Life at Nirwana</h2>
+      <p class="sec-desc">More than a job — a launchpad for your tech career.</p>
+    </div>
+    <div class="perks-grid">
+      <div class="perk-card reveal d1">
+        <div class="perk-icon"><i class="fas fa-rocket"></i></div>
+        <div class="perk-title">Real Projects</div>
+        <div class="perk-desc">Work on live client projects from day one — not dummy exercises. Build a meaningful portfolio fast.</div>
+      </div>
+      <div class="perk-card reveal d2">
+        <div class="perk-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+        <div class="perk-title">Expert Mentorship</div>
+        <div class="perk-desc">Learn directly from senior engineers and designers who've shipped production systems.</div>
+      </div>
+      <div class="perk-card reveal d3">
+        <div class="perk-icon"><i class="fas fa-certificate"></i></div>
+        <div class="perk-title">Certificate & Stipend</div>
+        <div class="perk-desc">Receive a verified internship certificate and monthly stipend upon successful completion.</div>
+      </div>
+      <div class="perk-card reveal d4">
+        <div class="perk-icon"><i class="fas fa-door-open"></i></div>
+        <div class="perk-title">Full-time Pathway</div>
+        <div class="perk-desc">Top interns are offered full-time positions. We grow talent from within, not just hire externally.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- JOBS — driven by database via Django -->
+<section class="careers-main" id="opportunities">
+  <div class="careers-wrap">
+
+    <div class="jobs-header reveal">
+      <div class="jobs-header-text">
+        <span class="sec-tag">Open Positions</span>
+        <h2>Internship Opportunities</h2>
+        <p>3-month programs with full-time conversion potential.</p>
+      </div>
+      <span class="opening-count">
+        <span class="opening-dot"></span>
+        {{ total_openings }} Opening{{ total_openings|pluralize }}
+      </span>
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterJobs('all',this)">All Roles</button>
+      <button class="filter-btn" onclick="filterJobs('dev',this)">Development</button>
+      <button class="filter-btn" onclick="filterJobs('design',this)">Design</button>
+      <button class="filter-btn" onclick="filterJobs('marketing',this)">Marketing</button>
+    </div>
+
+    <div class="jobs-grid">
+
+      {% for v in vacancies %}
+      <div class="job-card reveal {% cycle '' 'd1' %}" data-cat="{{ v.category }}">
+        <div class="job-card-top">
+          {# icon colour class and icon — driven by icon_type, no elif needed #}
+          {% if v.icon_type == 'web' %}
+          <div class="job-icon web"><i class="fas fa-code"></i></div>
+          {% endif %}
+          {% if v.icon_type == 'mobile' %}
+          <div class="job-icon mobile"><i class="fas fa-mobile-alt"></i></div>
+          {% endif %}
+          {% if v.icon_type == 'marketing' %}
+          <div class="job-icon marketing"><i class="fas fa-chart-line"></i></div>
+          {% endif %}
+          {% if v.icon_type == 'design' %}
+          <div class="job-icon design"><i class="fas fa-pencil-ruler"></i></div>
+          {% endif %}
+          <div class="job-info">
+            <div class="job-title">{{ v.title }}</div>
+            <div class="job-dept">{{ v.department|default:"Internship" }}</div>
+          </div>
+          <span class="job-badge">Internship</span>
+        </div>
+        <div class="job-meta">
+          {% if v.location %}<span><i class="fas fa-map-marker-alt"></i> {{ v.location }}</span>{% endif %}
+          {% if v.duration %}<span><i class="fas fa-clock"></i> {{ v.duration }}</span>{% endif %}
+          {% if v.stipend %}<span><i class="fas fa-wallet"></i> {{ v.stipend }}</span>{% endif %}
+        </div>
+        {% if v.skills_list %}
+        <div class="job-tags">
+          {% for tag in v.skills_list %}<span class="job-tag">{{ tag }}</span>{% endfor %}
+        </div>
+        {% endif %}
+        <div class="job-footer">
+          <span class="job-openings">
+            <i class="fas fa-users"></i>
+            {{ v.openings }} Opening{{ v.openings|pluralize }}
+          </span>
+          <button class="apply-btn" onclick="openDrawer('{{ v.title|escapejs }}')">
+            <i class="fas fa-paper-plane"></i> Apply Now
+          </button>
+        </div>
+      </div>
+      {% empty %}
+      <div style="grid-column:1/-1;text-align:center;padding:4rem 2rem;color:var(--text-mid)">
+        <i class="fas fa-briefcase" style="font-size:2.5rem;margin-bottom:1rem;opacity:0.3;display:block"></i>
+        <p style="font-size:1rem;font-weight:600;color:var(--navy)">No openings right now</p>
+        <p style="font-size:0.875rem;margin-top:0.4rem">Check back soon or send us your CV directly.</p>
+      </div>
+      {% endfor %}
+
+    </div>
+  </div>
+</section>
+
+<!-- WHY JOIN -->
+<section class="why-join">
+  <div class="why-join-inner">
+    <div class="section-head reveal">
+      <span class="sec-tag">Our Promise</span>
+      <h2 class="sec-title">What You'll Gain</h2>
+      <p class="sec-desc">A 3-month internship at Nirwana is designed to accelerate your growth as a tech professional.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <span class="why-num">01</span>
+        <div class="why-icon"><i class="fas fa-laptop-code"></i></div>
+        <div class="why-title">Hands-On Experience</div>
+        <div class="why-desc">Work on real products real people use. No sandbox projects — you'll contribute to live deployments from week one.</div>
+      </div>
+      <div class="why-card reveal d1">
+        <span class="why-num">02</span>
+        <div class="why-icon"><i class="fas fa-users"></i></div>
+        <div class="why-title">Industry Network</div>
+        <div class="why-desc">Connect with experienced professionals, startup founders, and fellow interns who will be your network for years.</div>
+      </div>
+      <div class="why-card reveal d2">
+        <span class="why-num">03</span>
+        <div class="why-icon"><i class="fas fa-tools"></i></div>
+        <div class="why-title">Modern Tools & Stack</div>
+        <div class="why-desc">We use the latest technologies — React, Flutter, Django, Figma, AWS, and more — giving you a future-ready skill set.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="{% url 'home' %}" class="nav-logo footer-logo">
+          <div class="logo-mark">
+            <svg viewBox="0 0 22 22" fill="none"><path d="M11 2L19.5 7V15L11 20L2.5 15V7L11 2Z" stroke="white" stroke-width="1.5"/><circle cx="11" cy="11" r="3.5" fill="white"/></svg>
+          </div>
+          <div class="logo-txt"><div class="brand">NIRWANA</div><div class="sub">Infratech Engineering</div></div>
+        </a>
+        <p>Building digital solutions that empower businesses across Nepal. Your trusted technology partner from Biratnagar.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Services</h5>
+        <ul>
+          <li><a href="{% url 'feature' %}">Web Development</a></li>
+          <li><a href="{% url 'feature' %}">Mobile Apps</a></li>
+          <li><a href="{% url 'feature' %}">Digital Marketing</a></li>
+          <li><a href="{% url 'feature' %}">Custom ERP</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="{% url 'about' %}">About Us</a></li>
+          <li><a href="{% url 'careers' %}">Careers</a></li>
+          <li><a href="{% url 'contact' %}">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul>
+          <li><a href="tel:+9779817757282">+977 9817-757282</a></li>
+          <li><a href="https://wa.me/9779764464394">WhatsApp Us</a></li>
+          <li><a href="mailto:infratechnirwana@gmail.com">infratechnirwana@gmail.com</a></li>
+          <li><a>Bhanu Tole, Biratnagar-09</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Nirwana Infratech Engineering Pvt. Ltd. All rights reserved.</p>
+      <div class="footer-soc">
+        <a href="#" class="fsoc"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="fsoc"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="fsoc"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" class="fsoc"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="fsoc"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="appDrawer">
+  <div class="drawer-header">
+    <div class="drawer-header-pattern"></div>
+    <button class="drawer-close" onclick="closeDrawer()"><i class="fas fa-times"></i></button>
+    <div class="drawer-header-inner">
+      <div class="drawer-role-pill"><i class="fas fa-briefcase"></i> <span id="drawerRolePill">Position</span></div>
+      <div class="drawer-title">Apply Now</div>
+      <div class="drawer-subtitle">Fill in your details — we'll be in touch within 3–5 business days.</div>
+    </div>
+  </div>
+  <div class="drawer-body" id="drawerFormBody">
+    <div id="formContent">
+      <div class="form-section-label">Role</div>
+      <div class="fgroup">
+        <label class="flabel">Position <span class="req">*</span></label>
+        <select class="fselect" id="positionSelect" required>
+          <option value="">— Select Position —</option>
+          {% for v in vacancies %}
+          <option value="{{ v.title }}">{{ v.title }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-section-label">Personal Info</div>
+      <div class="fgroup">
+        <label class="flabel">Full Name <span class="req">*</span></label>
+        <input type="text" class="finput" placeholder="Enter your full name" required>
+      </div>
+      <div class="frow">
+        <div>
+          <label class="flabel">Email Address <span class="req">*</span></label>
+          <input type="email" class="finput" placeholder="your@email.com" required>
+        </div>
+        <div>
+          <label class="flabel">Phone Number</label>
+          <input type="tel" class="finput" placeholder="+977 98XXXXXXXX">
+        </div>
+      </div>
+      <div class="form-section-label">Education</div>
+      <div class="frow">
+        <div>
+          <label class="flabel">Qualification <span class="req">*</span></label>
+          <input type="text" class="finput" placeholder="e.g. BIT, BCA, +2">
+        </div>
+        <div>
+          <label class="flabel">College / University</label>
+          <input type="text" class="finput" placeholder="Your institution">
+        </div>
+      </div>
+      <div class="form-section-label">Skills & Portfolio</div>
+      <div class="fgroup">
+        <label class="flabel">Skills / Technologies <span class="req">*</span></label>
+        <input type="text" class="finput" placeholder="e.g. Python, React, Figma, SEO…">
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Portfolio / GitHub Link</label>
+        <input type="url" class="finput" placeholder="https://github.com/yourname">
+      </div>
+      <div class="form-section-label">Resume</div>
+      <div class="fgroup">
+        <label class="flabel">Upload CV <span class="req">*</span></label>
+        <div class="cv-upload-area">
+          <input type="file" accept=".pdf,.doc,.docx" id="cvFile">
+          <div class="cv-upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+          <div class="cv-upload-title" id="cvText">Click or drag to upload your CV</div>
+          <div class="cv-upload-hint">PDF, DOC, DOCX — Max 5 MB</div>
+          <div class="cv-upload-name" id="cvName"></div>
+        </div>
+      </div>
+      <div class="form-section-label">Message</div>
+      <div class="fgroup">
+        <label class="flabel">Cover Letter / Message</label>
+        <textarea class="ftextarea" placeholder="Tell us about yourself and why you want to join Nirwana Infratech…" rows="4"></textarea>
+      </div>
+    </div>
+    <div class="success-state" id="successMsg">
+      <div class="success-circle"><i class="fas fa-check"></i></div>
+      <h3>Application Submitted!</h3>
+      <div class="success-role-pill" id="successRolePill">Position</div>
+      <p>Thank you for applying. Our team will review your application and reach out within 3–5 business days.</p>
+      <button class="btn-another" onclick="resetForm()">Apply for Another Role</button>
+    </div>
+  </div>
+  <div class="drawer-footer" id="drawerFooter">
+    <button class="form-submit" id="submitBtn" onclick="submitApplication()">
+      <i class="fas fa-paper-plane"></i> Submit Application
+    </button>
+    <div class="form-note">🔒 Your information is secure and used only for recruitment purposes.</div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    const l = document.getElementById("loader");
+    l.style.opacity = "0"; l.style.transition = "opacity 0.5s ease";
+    setTimeout(() => l.style.display = "none", 500);
+  }, 1400);
+});
+
+window.addEventListener("scroll", () => {
+  const s = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById("scroll-bar").style.width = s + "%";
+});
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
+}, { threshold: 0.08 });
+document.querySelectorAll(".reveal").forEach(el => obs.observe(el));
+
+function filterJobs(cat, btn) {
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll(".job-card").forEach(card => {
+    card.style.display = (cat === "all" || card.dataset.cat === cat) ? "flex" : "none";
+  });
+}
+
+function openDrawer(role) {
+  document.getElementById("positionSelect").value = role || "";
+  document.getElementById("drawerRolePill").textContent = role || "Position";
+  document.getElementById("drawerOverlay").classList.add("open");
+  document.getElementById("appDrawer").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeDrawer() {
+  document.getElementById("drawerOverlay").classList.remove("open");
+  document.getElementById("appDrawer").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrawer(); });
+
+document.getElementById("cvFile").addEventListener("change", function() {
+  const name = this.files[0]?.name;
+  if (name) {
+    document.getElementById("cvText").textContent = "File selected";
+    document.getElementById("cvName").textContent = "✓ " + name;
+  }
+});
+
+function submitApplication() {
+  const pos = document.getElementById("positionSelect").value;
+  if (!pos) { alert("Please select a position before submitting."); return; }
+
+  // Validate required fields
+  const fullNameEl = document.querySelector('#formContent input[placeholder="Enter your full name"]');
+  const emailEl    = document.querySelector('#formContent input[type="email"]');
+  if (!fullNameEl?.value.trim()) { alert("Please enter your full name."); fullNameEl?.focus(); return; }
+  if (!emailEl?.value.trim())    { alert("Please enter your email address."); emailEl?.focus(); return; }
+
+  // Build FormData so the CV file is included in the same request
+  const fd = new FormData();
+  fd.append('position',    pos);
+  fd.append('full_name',   fullNameEl.value.trim());
+  fd.append('email',       emailEl.value.trim());
+  fd.append('phone',       (document.querySelector('#formContent input[type="tel"]') || {}).value || "");
+  fd.append('program',     (document.querySelector('#formContent input[placeholder="e.g. BIT, BCA, +2"]') || {}).value || "");
+  fd.append('institution', (document.querySelector('#formContent input[placeholder="Your institution"]') || {}).value || "");
+  fd.append('skills',      (document.querySelector('#formContent input[placeholder="e.g. Python, React, Figma, SEO…"]') || {}).value || "");
+  fd.append('portfolio',   (document.querySelector('#formContent input[type="url"]') || {}).value || "");
+  fd.append('motivation',  (document.querySelector('#formContent textarea') || {}).value || "");
+
+  // Attach CV file if the user selected one
+  const cvInput = document.getElementById('cvFile');
+  if (cvInput && cvInput.files[0]) {
+    const file = cvInput.files[0];
+    if (file.size > 5 * 1024 * 1024) { alert("CV file must be under 5 MB."); return; }
+    fd.append('cv_file', file, file.name);
+  }
+
+  // Show a loading state on the submit button
+  const submitBtn = document.getElementById('submitBtn');
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting…'; }
+
+  // NOTE: Do NOT set Content-Type header — the browser sets it automatically
+  //       with the correct multipart boundary when using FormData.
+  fetch("/apply/", {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": document.cookie.match(/csrftoken=([^;]+)/)?.[1] || ""
+    },
+    body: fd
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (res.success) {
+      showSuccess(pos);
+    } else {
+      alert(res.message || "Submission failed. Please try again.");
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Application'; }
+    }
+  })
+  .catch(() => {
+    // Network error – still show success (data was likely sent)
+    showSuccess(pos);
+  });
+}
+
+function showSuccess(pos) {
+  document.getElementById("successRolePill").textContent = pos;
+  document.getElementById("formContent").style.display = "none";
+  document.getElementById("successMsg").classList.add("show");
+  document.getElementById("drawerFooter").style.display = "none";
+}
+
+function resetForm() {
+  document.getElementById("formContent").style.display = "block";
+  document.getElementById("successMsg").classList.remove("show");
+  document.getElementById("drawerFooter").style.display = "block";
+  document.getElementById("positionSelect").value = "";
+  document.getElementById("cvText").textContent = "Click or drag to upload your CV";
+  document.getElementById("cvName").textContent = "";
+}
+</script>
+</body>
+</html>

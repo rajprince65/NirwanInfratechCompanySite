@@ -1,0 +1,169 @@
+{% extends 'app1/admin/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block breadcrumb %}<span>Overview</span>{% endblock %}
+
+{% block content %}
+<!-- Stat Cards -->
+<div class="stat-grid">
+  <div class="stat-card blue">
+    <div class="stat-icon blue"><i class="fas fa-envelope"></i></div>
+    <div>
+      <div class="stat-value">{{ total_contacts }}</div>
+      <div class="stat-label">Contact Queries</div>
+      {% if unread_contacts %}
+      <div class="stat-sub"><i class="fas fa-circle" style="font-size:0.4rem"></i> {{ unread_contacts }} unread</div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="stat-card orange">
+    <div class="stat-icon orange"><i class="fas fa-file-lines"></i></div>
+    <div>
+      <div class="stat-value">{{ total_applications }}</div>
+      <div class="stat-label">Applications</div>
+      {% if pending_applications %}
+      <div class="stat-sub" style="color:#ea580c;background:#fff7ed"><i class="fas fa-circle" style="font-size:0.4rem"></i> {{ pending_applications }} pending</div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="stat-card green">
+    <div class="stat-icon green"><i class="fas fa-briefcase"></i></div>
+    <div>
+      <div class="stat-value">{{ active_vacancies }}</div>
+      <div class="stat-label">Active Vacancies</div>
+    </div>
+  </div>
+</div>
+
+<!-- Two-column tables -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+
+  <!-- Recent Contacts -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <span class="title-icon" style="background:#EFF6FF;color:var(--blue)"><i class="fas fa-envelope"></i></span>
+        Recent Contact Queries
+      </div>
+      <a href="{% url 'admin_contacts' %}" class="btn btn-ghost btn-sm">View All <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="card-body">
+      {% if recent_contacts %}
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in recent_contacts %}
+          <tr>
+            <td>
+              <div style="font-weight:600;font-size:0.85rem">{{ c.name }}</div>
+              <div style="font-size:0.73rem;color:var(--text-light)">{{ c.email }}</div>
+            </td>
+            <td style="color:var(--text-light);font-size:0.78rem">{{ c.submitted_at|date:"d M, H:i" }}</td>
+            <td>
+              {% if not c.is_read %}
+                <span class="badge unread"><i class="fas fa-circle" style="font-size:0.35rem"></i> New</span>
+              {% else %}
+                <span class="badge read">Read</span>
+              {% endif %}
+            </td>
+            <td><a href="{% url 'admin_contact_detail' c.pk %}" class="btn btn-ghost btn-sm">View</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state" style="padding:2rem">
+        <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+        <h3>No queries yet</h3>
+        <p>Contact form submissions will appear here.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Recent Applications -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <span class="title-icon" style="background:#FFFBEB;color:var(--orange)"><i class="fas fa-file-lines"></i></span>
+        Recent Applications
+      </div>
+      <a href="{% url 'admin_applications' %}" class="btn btn-ghost btn-sm">View All <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="card-body">
+      {% if recent_applications %}
+      <table>
+        <thead>
+          <tr>
+            <th>Applicant</th>
+            <th>Position</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in recent_applications %}
+          <tr>
+            <td>
+              <div style="font-weight:600;font-size:0.85rem">{{ a.full_name }}</div>
+              <div style="font-size:0.73rem;color:var(--text-light)">{{ a.email }}</div>
+            </td>
+            <td style="font-size:0.78rem;max-width:120px">{{ a.position|truncatechars:28 }}</td>
+            <td><span class="badge {{ a.status }}">{{ a.get_status_display }}</span></td>
+            <td><a href="{% url 'admin_application_detail' a.pk %}" class="btn btn-ghost btn-sm">View</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state" style="padding:2rem">
+        <div class="empty-icon"><i class="fas fa-folder-open"></i></div>
+        <h3>No applications yet</h3>
+        <p>Internship applications will appear here.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<!-- Quick Actions -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <span class="title-icon" style="background:#EFF6FF;color:var(--blue)"><i class="fas fa-bolt"></i></span>
+      Quick Actions
+    </div>
+  </div>
+  <div class="card-body" style="padding:1.5rem;display:flex;gap:0.875rem;flex-wrap:wrap">
+    <a href="{% url 'admin_vacancy_create' %}" class="btn btn-primary btn-lg">
+      <i class="fas fa-plus"></i> Add New Vacancy
+    </a>
+    <a href="{% url 'admin_contacts' %}" class="btn btn-ghost btn-lg">
+      <i class="fas fa-envelope"></i> View Contacts
+    </a>
+    <a href="{% url 'admin_applications' %}" class="btn btn-ghost btn-lg">
+      <i class="fas fa-file-lines"></i> View Applications
+    </a>
+    <a href="{% url 'admin_vacancies' %}" class="btn btn-ghost btn-lg">
+      <i class="fas fa-briefcase"></i> Manage Vacancies
+    </a>
+    <a href="{% url 'home' %}" target="_blank" class="btn btn-ghost btn-lg">
+      <i class="fas fa-globe"></i> View Website
+    </a>
+  </div>
+</div>
+
+<style>
+@media(max-width:900px){
+  [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
+}
+</style>
+{% endblock %}
